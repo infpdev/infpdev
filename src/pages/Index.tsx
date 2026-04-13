@@ -14,8 +14,14 @@ import bg7 from "@/assets/7.png";
 import bg8 from "@/assets/8.png";
 import bg9 from "@/assets/9.png";
 import bg10 from "@/assets/10.png";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 // const pfp = "https://avatar-cyan.vercel.app/api/pfp/495820009629810698/smallimage";
-import pfp from "../../public/favicon.png";
+const pfp = "/favicon.png";
 // Array of all background images - add new imports here
 const backgroundImages = [bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9, bg10];
 
@@ -24,7 +30,7 @@ const getRandomBackground = () => {
   const index = Math.floor(Math.random() * backgroundImages.length);
   return backgroundImages[index];
 };
-const isDevDead = true;
+const isDevDead = false;
 
 const Index = () => {
   const [copied, setCopied] = useState(false);
@@ -32,8 +38,18 @@ const Index = () => {
   const discordUsername = ".dev17";
   const [isMobile, setIsMobile] = useState(false);
 
-  const randomProject = useMemo(() => {
-    return projects[Math.floor(Math.random() * projects.length)];
+  // Select 3 unique random projects
+  const randomProjects = useMemo(() => {
+    if (projects.length <= 3) {
+      // Shuffle the array so order is random
+      return [...projects].sort(() => Math.random() - 0.5);
+    }
+    const selected = new Set<number>();
+    while (selected.size < 3) {
+      const idx = Math.floor(Math.random() * projects.length);
+      selected.add(idx);
+    }
+    return Array.from(selected).map((i) => projects[i]);
   }, []);
 
   const copyUsername = () => {
@@ -57,349 +73,378 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col p-6 md:p-8 relative select-none">
-      {isDevDead && <Ded />}
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <div className="min-h-screen bg-background text-foreground flex flex-col p-6 md:p-8 relative select-none">
+          {isDevDead && <Ded />}
 
-      <AmbientAudioToggle isMobile={isMobile} />
-      {/* Cat image fixed behind content */}
-      <div
-        className={`fixed 
- inset-0 flex items-center justify-center pointer-events-none z-0 ${
-   !isMobile ? "-translate-x-[5vw]" : ""
- }`}
-      >
-        <img
-          src={backgroundImage}
-          alt=""
-          className="h-[50vh] w-auto object-contain opacity-30"
-        />
-      </div>
-      <div className="flex-1 flex flex-col items-center justify-center relative z-10">
-        <div className="w-full max-w-[85rem]">
-          {/* Main content grid - responsive, both columns in same container */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_0.1fr_1.4fr] gap-8 lg:gap-12">
-            {/* Left column: Hero + Services + Expectations */}
-            <div className="space-y-10 flex flex-col">
-              {/* Hero Section */}
+          <AmbientAudioToggle isMobile={isMobile} />
+          {/* fixed background image */}
+          <div
+            className={`fixed inset-0 flex items-center justify-center pointer-events-none z-0
+              ${isMobile ? "" : "-translate-y-[10vh]"}`}
+          >
+            <img
+              src={backgroundImage}
+              alt=""
+              className="h-[70vh] w-auto object-contain opacity-30"
+            />
+          </div>
+          <div className="flex-1 flex flex-col items-center justify-center relative z-10">
+            <div className="w-full max-w-[85rem]">
               <section className="space-y-3 transition-transform duration-200 origin-left">
                 <h1 className="text-2xl font-medium text-foreground">
                   hey, i'm dev (dave's okay too ^^)
                 </h1>
-                <p className="text-muted-foreground leading-relaxed">
-                  i'm just an introverted developer, who likes building small,
-                  silly things.
-                  <br />
-                  it's usually just for fun, but sometimes it helps someone.
-                  <br></br>i learn a lot doing it, and sometimes end up meeting
-                  people i vibe with.
-                  <br /> p.s. i post random stuff on youtube sometimes :{">"}
-                  <br></br>p.s. also, yes — cats. love 'em.
-                </p>
               </section>
 
-              {/* What I help with */}
-              <section className="space-y-4">
-                <h2 className="text-sm font-medium text-muted-foreground">
-                  little things I'm usually up for
-                </h2>
-
-                <ul className="space-y-2.5 text-secondary-foreground">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />
-                    small websites, simple pages
-                  </li>
-
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />
-                    scripts, tiny automations
-                  </li>
-
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />
-                    fixing weird or annoying issues
-                  </li>
-
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />
-                    chrome extensions, small tools
-                  </li>
-
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />
-                    low-key dev collabs (introverts welcome)
-                  </li>
-                </ul>
-              </section>
-
-              {/* Expectations */}
-              <section className="space-y-4">
-                <h2 className="text-sm font-medium text-muted-foreground">
-                  things you might want help with
-                </h2>
-
-                <ul className="space-y-2.5 text-secondary-foreground">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />a
-                    simple intro or personal page (for yourself, art, or links)
-                  </li>
-
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />a
-                    small website to show your work or ideas
-                  </li>
-
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />
-                    turning a rough idea into something real and usable
-                  </li>
-
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />a
-                    small page to surprise a friend or partner
-                  </li>
-
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-green-200/20" />
-                    trying out or remixing things i've already built (like
-                    BingeBoo or Syncify)
-                  </li>
-                </ul>
-              </section>
-            </div>
-            <div></div>
-
-            {/* Right column: Projects + Why Discord */}
-            <div className="space-y-8 flex flex-col">
-              <h2 className="text-sm font-medium text-muted-foreground tracking-wide">
-                little things, lately
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Project Card 1 */}
-                <div className="flex flex-col rounded-lg bg-card/40 backdrop-blur-sm border border-border p-4 transition-colors duration-200 hover:bg-secondary/30">
-                  <a
-                    href="https://youtu.be/SD39LjpOwfA"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
-                  >
-                    {/* Thumbnail */}
-                    <img
-                      src="https://img.youtube.com/vi/SD39LjpOwfA/sddefault.jpg"
-                      alt="Project video thumbnail"
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                    />
-
-                    {/* Soft overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-muted/60 to-muted/30" />
-
-                    {/* Play button */}
-                    <div
-                      className="relative z-10 w-12 opacity-0 group-hover:opacity-100 transition-all h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200"
-                      title="watch on youtube"
-                    >
-                      <ExternalLink className="w-5 h-5 text-primary fill-primary" />
-                    </div>
-                  </a>
-
-                  <h3 className="font-medium text-card-foreground mb-1">
-                    bingeboo
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    a tiny remote for netflix, made for long-distance nights
-                  </p>
-                  <a
-                    href="https://github.com/infpdev/bingeboo"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto text-xs text-primary/80 transition-colors duration-200 hover:text-primary w-fit select-auto"
-                  >
-                    view on github →
-                  </a>
+              {/* Main content grid - responsive, both columns in same container */}
+              <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                {/* Left column */}
+                <div className="space-y-10 flex flex-col">
+                  {/* About me - brief */}
+                  <div className="flex text-[15px] flex-col justify-center p-4 rounded-lg bg-secondary/10 backdrop-blur-sm border border-border/50 lg:flex-1">
+                    <p className="text-muted-foreground leading-relaxed">
+                      i'm an introverted developer who likes building small,
+                      silly stuff.
+                      <br></br> it's usually just for fun, but sometimes they
+                      end up being useful
+                      <br></br>
+                      <br></br>i learn as i build, break stuff, fix, repeat
+                      <br></br>sometimes i meet people i actually vibe with
+                      <br></br>
+                      <br></br> p.s. i post random stuff on youtube sometimes :
+                      {">"}
+                      <br></br>
+                      also, yes - cats {"<3"}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Project Card 2 */}
-                <div className="flex flex-col rounded-lg bg-card/40 backdrop-blur-sm border border-border p-4 transition-colors duration-200 hover:bg-secondary/30">
-                  <a
-                    href={
-                      !randomProject.hasVideo
-                        ? randomProject.href
-                        : `https://youtu.be/${randomProject.videoId}`
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
-                    title={randomProject.hasVideo ? "" : "visit site"}
-                  >
-                    <img
-                      src={
-                        !randomProject.hasVideo
-                          ? randomProject.screenshot
-                          : `https://img.youtube.com/vi/${randomProject.videoId}/sddefault.jpg`
-                      }
-                      alt={`${randomProject.title} preview`}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted/20" />
-
-                    {randomProject.hasVideo ? (
-                      <div
-                        className="relative z-10 w-12 h-12 rounded-full opacity-0 group-hover:opacity-100 transition-all bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200"
-                        title="watch on youtube"
-                      >
-                        <ExternalLink className="w-5 h-5 text-primary fill-primary" />
-                      </div>
-                    ) : (
-                      ""
-                    )}
-                  </a>
-
-                  <h3 className="font-medium text-card-foreground mb-1">
-                    {randomProject.title}
-                  </h3>
-
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {randomProject.description}
-                  </p>
-
-                  <a
-                    href={randomProject.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto text-xs text-primary/80 transition-colors w-fit duration-200 hover:text-primary select-auto"
-                  >
-                    view on github →
-                  </a>
+                {/* Right column */}
+                <div className="space-y-8 flex flex-col">
+                  {/* comfort zone */}
+                  <div className="flex flex-col justify-center p-4 rounded-lg bg-secondary/10 backdrop-blur-sm border border-border/50 lg:flex-1">
+                    <h3 className="text-sm font-medium text-muted-foreground tracking-wide mb-3">
+                      (if you're still here, here's a bit more)
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      if i'm online, i'm probably fixing something that annoyed
+                      me or just looking for a new distraction.
+                      <br />
+                      sometimes it works, sometimes it doesn't — i keep it if
+                      it's fun.
+                      <br />
+                      <br />
+                      open to collabs, as long as it's not some
+                      quantum-computing AI startup ;]
+                      <br />
+                      <br />
+                      p.s. i play gtao, pubg, battlefront 2, etc — if you're
+                      introverted too, we’ll get along fine :]
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Why Discord section */}
-              <div className="flex flex-col justify-center mt-6 p-4 rounded-lg bg-secondary/20 border border-border/50 lg:flex-1">
-                <h3 className="text-sm font-medium text-muted-foreground tracking-wide mb-3">
-                  ask in your own way
-                </h3>
-                <p className="text-sm text-secondary-foreground leading-relaxed">
-                  you don't need the right words.
-                  <br /> it's okay if the idea isn't clear yet.
-                  <br />
-                  even a "this might sound dumb but…" message is fine.
-                  <br /> we can just talk it through.
-                  <br /> it can be as simple as: "hey, can you help me make a
-                  small intro page?"
-                  <br />
-                  <br />
-                  i usually keep things small and low-pressure, since i don't
-                  charge for this.
-                  <br />
-                  if it's not something i can help with, i'll say so early.
-                  <br />
-                  <br />
-                  p.s. i play gta, pubg, etc; if you're introverted too, we can
-                  play sometime, or just talk :{"]"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Reach out - below both columns */}
-          <section
-            className={`mt-12 space-y-3 ${
-              isMobile ? "w-full items-center  flex flex-col " : ""
-            }`}
-          >
-            <h2 className="text-sm font-medium text-muted-foreground tracking-wide">
-              i'm usually around here
-            </h2>
-            <div className="flex items-center gap-5 text-secondary-foreground">
-              <div className=" flex items-center gap-1 text-sm">
-                {/* Placeholder pfp next to Discord */}
-
-                <div
-                  className={`transition-all  rounded-full bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden ${
-                    isMobile
-                      ? "w-[11vw] h-[11vw]"
-                      : "w-5 h-5 hover:w-14 hover:h-14"
-                  }`}
+              {/* Projects, below the grid */}
+              <div className="w-full flex mt-5 flex-col justify-center items-center">
+                <h2
+                  className="text-sm w-fit mb-2 flex items-center justify-center font-medium text-muted-foreground tracking-wide
+                bg-secondary/10 backdrop-blur-[2px] rounded-lg p-2"
                 >
-                  <img
-                    src={pfp}
-                    alt="pfp"
-                    className="w-full h-full object-cover"
-                  ></img>
-                </div>
+                  little things, lately
+                </h2>
 
-                <div className="flex group justify-center items-center gap-1 ml-2">
-                  <DiscordIcon className="w-4 h-4 " />
+                <div className="grid grid-cols-1 w-full sm:grid-cols-3 gap-5">
+                  {/* Project Card 1 */}
+                  <div
+                    className="flex flex-col rounded-xl w-full bg-card/20 backdrop-blur-[1px] 
+                  border border-border p-4 transition-colors duration-200 hover:bg-secondary/30"
+                  >
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={
+                            !randomProjects[0].hasVideo
+                              ? randomProjects[0].href
+                              : `https://youtu.be/${randomProjects[0].videoId}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
+                        >
+                          <img
+                            src={
+                              !randomProjects[0].hasVideo
+                                ? randomProjects[0].screenshot
+                                : `https://img.youtube.com/vi/${randomProjects[0].videoId}/sddefault.jpg`
+                            }
+                            alt={`${randomProjects[0].title} preview`}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            loading="lazy"
+                          />
 
-                  <span className="select-text">{discordUsername}</span>
-                  {isMobile ? (
-                    <button
-                      onClick={copyUsername}
-                      className="ml-1 px-2 py-1 rounded bg-secondary/80 hover:bg-secondary text-xs text-secondary-foreground flex items-center gap-1 select-auto cursor-pointer"
+                          <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted/20" />
+                          {randomProjects[0].hasVideo ? (
+                            <div className="relative z-10 w-12 h-12 rounded-full opacity-0 group-hover:opacity-100 transition-all bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
+                              <ExternalLink className="w-5 h-5 text-primary fill-primary" />
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="text-xs "
+                        sideOffset={-35}
+                      >
+                        {randomProjects[0].hasVideo
+                          ? "watch on youtube"
+                          : "visit site"}
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <h3 className="font-medium text-card-foreground mb-1">
+                      {randomProjects[0].title}
+                    </h3>
+
+                    <p className="text-sm text-muted-foreground mb-2 whitespace-pre-wrap">
+                      {randomProjects[0].description}
+                    </p>
+
+                    <a
+                      href={randomProjects[0].github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-auto text-xs text-primary/80 transition-colors w-fit duration-200 hover:text-primary select-auto"
                     >
-                      {copied ? (
-                        <>
-                          <Check className="w-3 h-3" />
-                          copied
-                        </>
+                      view on github →
+                    </a>
+                  </div>
+
+                  {/* Project Card 2  - Static*/}
+                  <div className="flex flex-col rounded-xl w-full bg-card/20 backdrop-blur-[2px] border border-border p-4 transition-colors duration-200 hover:bg-secondary/30">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href="https://youtu.be/RcretUM65l0"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
+                        >
+                          {/* Thumbnail */}
+                          <img
+                            src="https://img.youtube.com/vi/RcretUM65l0/sddefault.jpg"
+                            alt="Project video thumbnail"
+                            className="absolute inset-0 w-full h-full object-cover"
+                            loading="lazy"
+                          />
+
+                          {/* Soft overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-muted/60 to-muted/30" />
+
+                          {/* Play button */}
+                          <div className="relative z-10 w-12 opacity-0 group-hover:opacity-100 transition-all h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
+                            <ExternalLink className="w-5 h-5 text-primary fill-primary" />
+                          </div>
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="text-xs "
+                        sideOffset={-35}
+                      >
+                        <p>watch on youtube</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <h3 className="font-medium text-card-foreground mb-1">
+                      vaultOps
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      a small toolkit for gtao heists <br></br>fixes annoying
+                      things and solves fingerprint puzzles.
+                    </p>
+                    <a
+                      href="https://github.com/infpdev/gtao-heist-toolkit"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-auto text-xs text-primary/80 transition-colors duration-200 hover:text-primary w-fit select-auto"
+                    >
+                      view on github →
+                    </a>
+                  </div>
+                  {/* Project Card 3 */}
+                  <div
+                    className="flex flex-col rounded-xl w-full bg-card/20 whitespace-pre-wrap
+                   backdrop-blur-[1px] border border-border p-4 transition-colors duration-200 hover:bg-secondary/30"
+                  >
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={
+                            !randomProjects[1].hasVideo
+                              ? randomProjects[1].href
+                              : `https://youtu.be/${randomProjects[1].videoId}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
+                        >
+                          <img
+                            src={
+                              !randomProjects[1].hasVideo
+                                ? randomProjects[1].screenshot
+                                : `https://img.youtube.com/vi/${randomProjects[1].videoId}/sddefault.jpg`
+                            }
+                            alt={`${randomProjects[1].title} preview`}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            loading="lazy"
+                          />
+
+                          <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted/20" />
+
+                          {randomProjects[1].hasVideo ? (
+                            <div className="relative z-10 w-12 h-12 rounded-full opacity-0 group-hover:opacity-100 transition-all bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
+                              <ExternalLink className="w-5 h-5 text-primary fill-primary" />
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="text-xs "
+                        sideOffset={-35}
+                      >
+                        {randomProjects[1].hasVideo
+                          ? "watch on youtube"
+                          : "visit site"}
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <h3 className="font-medium text-card-foreground mb-1">
+                      {randomProjects[1].title}
+                    </h3>
+
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {randomProjects[1].description}
+                    </p>
+
+                    <a
+                      href={randomProjects[1].github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-auto text-xs text-primary/80 transition-colors w-fit duration-200 hover:text-primary select-auto"
+                    >
+                      view on github →
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Reach out - below both columns */}
+              <section
+                className={`mt-12 w-full items-center flex flex-col space-y-3 
+                  ${!isMobile ? "text-base" : "text-sm"}`}
+              >
+                <h2 className=" font-medium text-muted-foreground tracking-wide">
+                  i'm usually around here
+                </h2>
+                <div
+                  className={`flex items-center  text-secondary-foreground
+                     ${!isMobile ? "gap-10" : "gap-5"}`}
+                >
+                  <div className=" flex items-center gap-1 ">
+                    {/* pfp next to Discord */}
+
+                    <div
+                      className={`transition-all  rounded-full bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden ${
+                        isMobile
+                          ? "w-[11vw] h-[11vw]"
+                          : "w-5 h-5 hover:w-14 hover:h-14"
+                      }`}
+                    >
+                      <img
+                        src={pfp}
+                        alt="pfp"
+                        className="w-full h-full object-cover"
+                      ></img>
+                    </div>
+
+                    <div className="flex group  justify-center items-center gap-1 ml-2">
+                      <DiscordIcon className="w-4 h-4 " />
+
+                      <span className="select-text">{discordUsername}</span>
+                      {isMobile ? (
+                        <button
+                          onClick={copyUsername}
+                          className="ml-1 px-2 py-1 rounded bg-secondary/80 hover:bg-secondary text-xs text-secondary-foreground flex items-center gap-1 select-auto cursor-pointer"
+                        >
+                          {copied ? (
+                            <>
+                              <Check className="w-3 h-3" />
+                              copied
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3" />
+                              copy
+                            </>
+                          )}
+                        </button>
                       ) : (
-                        <>
-                          <Copy className="w-3 h-3" />
-                          copy
-                        </>
-                      )}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={copyUsername}
-                      className={`flex group-hover:ml-2 py-1 rounded bg-secondary/80 hover:bg-secondary text-xs text-secondary-foreground items-center select-auto cursor-pointer 
+                        <button
+                          onClick={copyUsername}
+                          className={`flex group-hover:ml-2 group-hover:px-2 gap-1 py-1 rounded bg-secondary/80 hover:bg-secondary text-xs text-secondary-foreground items-center select-auto cursor-pointer 
                     overflow-hidden w-0 opacity-0  group-hover:opacity-100 transition-all duration-300 ease-out ${
                       copied
-                        ? "pl-2 pr-2 group-hover:w-[68px] mr-3"
+                        ? "px-2 group-hover:w-[68px] mr-3"
                         : "group-hover:pl-2 group-hover:w-14"
                     }`}
-                    >
-                      {copied ? (
-                        <>
-                          <Check className="w-3 h-3" />
-                          copied
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3 h-3" />
-                          copy
-                        </>
+                        >
+                          {copied ? (
+                            <>
+                              <Check className="w-3 h-3" />
+                              copied
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3" />
+                              copy
+                            </>
+                          )}
+                        </button>
                       )}
-                    </button>
-                  )}
+                    </div>
+                  </div>
+                  <a
+                    href="https://github.com/infpdev"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 transition-colors duration-200 hover:text-primary select-auto"
+                  >
+                    <Github className="w-4 h-4" />
+                    <span>infpdev</span>
+                  </a>
+                  <a
+                    href="https://youtube.com/@dev17"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 transition-colors duration-200 hover:text-primary select-auto"
+                  >
+                    <Youtube className="w-5 h-5" />
+                    <span>dev</span>
+                  </a>
                 </div>
-              </div>
-              <a
-                href="https://github.com/infpdev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-sm transition-colors duration-200 hover:text-primary select-auto"
-              >
-                <Github className="w-4 h-4" />
-                <span>infpdev</span>
-              </a>
-              <a
-                href="https://youtube.com/@dev17"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-sm transition-colors duration-200 hover:text-primary select-auto"
-              >
-                <Youtube className="w-4 h-4" />
-                <span>dev</span>
-              </a>
+              </section>
             </div>
-          </section>
+          </div>
         </div>
-      </div>
-    </div>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 

@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { BatteryLow } from "lucide-react";
 
 export const Ded = () => {
