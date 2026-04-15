@@ -1,30 +1,33 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 
 // Tier 1 tracks - loaded initially
-import t1Track1 from "@/assets/audio/T1 Good Things - Cloud Pastel.mp3";
+import t1Track1 from "@/assets/audio/T1 ROSE - Gone MV.mp3";
 import t1Track2 from "@/assets/audio/T1 Painting - Sonia Gadhia.mp3";
-import t1Track3 from "@/assets/audio/T1 pami - highway (Official Lyric Video) - pami (2).mp3";
+import t1Track3 from "@/assets/audio/T1 pami - highway (Official Lyric Video) - pami.mp3";
 
 // Tier 2 tracks - loaded only when needed
 import t2Track1 from "@/assets/audio/T2 Geowulf - Saltwater (Official Video) - geowulfmusicVEVO.mp3";
 import t2Track2 from "@/assets/audio/T2 Here You Are - We Are Various.mp3";
-import t2Track3 from "@/assets/audio/T2 Stumble - CASTLEBEAT.mp3";
-import t2Track4 from "@/assets/audio/T2 clouds in my room - kanegi. (1).mp3";
+import t2Track3 from "@/assets/audio/T2 clouds in my room - kanegi.mp3";
+import t2Track4 from "@/assets/audio/T1 Good Things - Cloud Pastel.mp3";
 
 // Tier 3 tracks - loaded only when needed
 import t3Track1 from "@/assets/audio/T3 Sweet Nobody - The Lasting Kind - i'm cyborg but that's ok.mp3";
-import t3Track2 from "@/assets/audio/T3 With You - The Wild Wind (1).mp3";
+import t3Track2 from "@/assets/audio/T3 With You - The Wild Wind.mp3";
+import t3Track3 from "@/assets/audio/T2 Stumble - CASTLEBEAT.mp3";
 
 const TIER_1_TRACKS = [t1Track1, t1Track2, t1Track3];
 const TIER_2_TRACKS = [t2Track1, t2Track2, t2Track3, t2Track4];
-const TIER_3_TRACKS = [t3Track1, t3Track2];
+const TIER_3_TRACKS = [t3Track1, t3Track2, t3Track3];
 
 const TARGET_VOLUME = 0.3;
 const FADE_DURATION = 800;
 const PRELOAD_THRESHOLD = 5; // seconds before end to queue next track
 
 const getRandomTrack = (tracks: string[]): string => {
-  return tracks[Math.floor(Math.random() * tracks.length)];
+  const randomBuffer = new Uint32Array(1);
+  crypto.getRandomValues(randomBuffer);
+  return tracks[randomBuffer[0] % tracks.length];
 };
 
 export const useAmbientAudio = () => {
