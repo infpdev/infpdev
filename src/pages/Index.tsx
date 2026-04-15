@@ -263,8 +263,7 @@ const Index = () => {
                       vaultOps
                     </h3>
                     <p className="text-sm text-muted-foreground mb-2">
-                      a small toolkit for gtao heists <br></br>fixes annoying
-                      things and solves fingerprint puzzles.
+                      a small toolkit for gtao heists <br></br>fixes the PgUp bug and solves fingerprint puzzles.
                     </p>
                     <a
                       href="https://github.com/infpdev/gtao-heist-toolkit"
