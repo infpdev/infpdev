@@ -229,14 +229,14 @@ const Index = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <a
-                          href="https://youtu.be/RcretUM65l0"
+                          href="https://www.youtube.com/watch?v=j44mYY3tC10"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
                         >
                           {/* Thumbnail */}
                           <img
-                            src="https://img.youtube.com/vi/RcretUM65l0/sddefault.jpg"
+                            src="https://img.youtube.com/vi/j44mYY3tC10/maxresdefault.jpg"
                             alt="Project video thumbnail"
                             className="absolute inset-0 w-full h-full object-cover"
                             loading="lazy"
