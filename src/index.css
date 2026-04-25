@@ -126,3 +126,21 @@
     opacity: 0.75;
   }
 }
+
+html {
+  cursor:
+    url("@/assets/cursor.png") 12 12,
+    auto;
+}
+
+a,
+button,
+.cursor-pointer {
+  cursor:
+    url("@/assets/pointer.png") 12 12,
+    auto !important;
+}
+
+.select-text {
+  cursor: text !important;
+}

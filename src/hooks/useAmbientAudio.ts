@@ -20,7 +20,7 @@ const TIER_1_TRACKS = [t1Track1, t1Track2, t1Track3];
 const TIER_2_TRACKS = [t2Track1, t2Track2, t2Track3, t2Track4];
 const TIER_3_TRACKS = [t3Track1, t3Track2, t3Track3];
 
-const TARGET_VOLUME = 0.3;
+const TARGET_VOLUME = 0.1;
 const FADE_DURATION = 800;
 const PRELOAD_THRESHOLD = 5; // seconds before end to queue next track
 
