@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import { projects } from "../assets/projects";
 import { AmbientAudioToggle } from "@/components/AmbientAudioToggle";
 import { Ded } from "@/components/Ded";
+import Redirect from "@/components/Redirect";
 // Import all background images - add more with bg-X.png naming
 import bg1 from "@/assets/1.png";
 import bg2 from "@/assets/2.png";
@@ -79,6 +80,7 @@ const Index = () => {
           {isDevDead && <Ded />}
 
           <AmbientAudioToggle isMobile={isMobile} />
+          <Redirect />
           {/* fixed background image */}
           <div
             className={`fixed inset-0 flex items-center justify-center pointer-events-none z-0
@@ -263,7 +265,8 @@ const Index = () => {
                       vaultOps
                     </h3>
                     <p className="text-sm text-muted-foreground mb-2">
-                      a small toolkit for gtao heists <br></br>fixes the PgUp bug and solves fingerprint puzzles.
+                      a small toolkit for gtao heists <br></br>fixes the PgUp
+                      bug and solves fingerprint puzzles.
                     </p>
                     <a
                       href="https://github.com/infpdev/gtao-heist-toolkit"
