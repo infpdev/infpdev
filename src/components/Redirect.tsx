@@ -35,6 +35,15 @@ const REDIRECT_CONFIGS: RedirectConfig[] = [
     yesRedirect:
       "https://github.com/infpdev/gtao-heist-toolkit/blob/main/HOW-TO-UPDATE.md",
   },
+  {
+    param: "vaultOps",
+    value: "3",
+    type: "text-redirect",
+    title: "vaultOps",
+    message: "Redirecting to vaultsOps → standalone update page",
+    yesRedirect:
+      "https://github.com/infpdev/gtao-heist-toolkit/blob/main/lib/standalone%20scripts/HOW-TO-UPDATE-STANDALONE.md",
+  },
 ];
 
 const redirectWithReferrer = (url: string) => {
@@ -124,7 +133,7 @@ const Redirect = () => {
           : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="bg-card border border-border rounded-2xl p-8 max-w-md mx-auto text-center space-y-6">
+      <div className="bg-card border border-border rounded-2xl p-8 max-w-lg mx-auto text-center space-y-6">
         <div className="space-y-3">
           <h2 className="text-sm uppercase tracking-[0.18em] text-muted-foreground">
             {activeRedirect.title}
