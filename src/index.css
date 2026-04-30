@@ -141,6 +141,12 @@ button,
     auto !important;
 }
 
+.cursor-opaque{
+  cursor:
+    url("@/assets/cursorOpaque.png") 12 12,
+    auto !important;
+}
+
 .select-text {
   cursor: text !important;
 }

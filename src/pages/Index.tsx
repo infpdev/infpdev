@@ -363,7 +363,7 @@ const Index = () => {
                     {/* pfp next to Discord */}
 
                     <div
-                      className={`transition-all  rounded-full bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden ${
+                      className={`transition-all cursor-opaque rounded-full bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden ${
                         isMobile
                           ? "w-[11vw] h-[11vw]"
                           : "w-5 h-5 hover:w-14 hover:h-14"
