@@ -38,6 +38,8 @@ const Index = () => {
   const backgroundImage = useMemo(() => getRandomBackground(), []);
   const discordUsername = ".dev17";
   const [isMobile, setIsMobile] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   // Select 3 unique random projects
   const randomProjects = useMemo(() => {
@@ -52,6 +54,46 @@ const Index = () => {
     }
     return Array.from(selected).map((i) => projects[i]);
   }, []);
+
+  // Preload project images
+  useEffect(() => {
+    setTimeout(() => {
+      setShowLoader(true);
+
+      // Move preloadImages function here
+      setImagesLoaded(false);
+      const imageUrls: string[] = [];
+
+      randomProjects.forEach((project) => {
+        if (project.hasVideo) {
+          imageUrls.push(
+            `https://img.youtube.com/vi/${project.videoId}/sddefault.jpg`,
+          );
+        } else {
+          imageUrls.push(project.screenshot);
+        }
+      });
+
+      imageUrls.push(
+        "https://img.youtube.com/vi/j44mYY3tC10/maxresdefault.jpg",
+      );
+
+      let loadedCount = 0;
+      const handleImageLoad = () => {
+        loadedCount++;
+        if (loadedCount === imageUrls.length) {
+          setTimeout(() => setImagesLoaded(true), 500);
+        }
+      };
+
+      imageUrls.forEach((url) => {
+        const img = new Image();
+        img.onload = handleImageLoad;
+        img.onerror = handleImageLoad;
+        img.src = url;
+      });
+    }, 100);
+  }, [randomProjects]);
 
   const copyUsername = () => {
     navigator.clipboard.writeText(discordUsername);
@@ -73,18 +115,33 @@ const Index = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // useEffect(() => {
+  //   // Show the index content after a short delay to allow for any initial animations or loading
+  //   toggleIndex(true);
+
+  //   // Cleanup function to hide the index content if the component unmounts
+  //   return () => toggleIndex(false);
+  // }, []);
+
+  // function toggleIndex(shouldShow: boolean) {
+  //   setTimeout(() => setShowIndex(shouldShow), 500);
+  // }
+
   return (
     <TooltipProvider delayDuration={300}>
       <Tooltip>
-        <div className="min-h-screen bg-background text-foreground flex flex-col p-6 md:p-8 relative select-none">
+        <div
+          className={`min-h-screen bg-background text-foreground flex flex-col  relative select-none transition-opacity duration-1000`}
+        >
           {isDevDead && <Ded />}
 
-          <AmbientAudioToggle isMobile={isMobile} />
+          {imagesLoaded && <AmbientAudioToggle isMobile={isMobile} />}
           <Redirect />
           {/* fixed background image */}
           <div
-            className={`fixed inset-0 flex items-center justify-center pointer-events-none z-0
-              ${isMobile ? "" : "-translate-y-[10vh]"}`}
+            className={`fixed inset-0 flex items-center transition-opacity justify-center pointer-events-none z-0 p-6 md:p-8
+              ${isMobile ? "" : "-translate-y-[10vh]"}
+              ${imagesLoaded ? "opacity-100" : "opacity-50"}`}
           >
             <img
               src={backgroundImage}
@@ -92,7 +149,23 @@ const Index = () => {
               className="h-[70vh] w-auto object-contain opacity-30"
             />
           </div>
-          <div className="flex-1 flex flex-col items-center justify-center relative z-10">
+
+          {/* Spinner for the images */}
+
+          <div
+            className={`w-full h-[100dvh] rounded-lg backdrop-blur-sm z-10 text-muted-foreground flex flex-col transition-opacity duration-500
+             items-center gap-5 absolute justify-center
+             ${showLoader ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+          >
+            <span>waking up the meowls</span>
+            <span className="w-5 h-5 rounded-full border-2 border-primary/35 border-t-primary animate-spin" />
+          </div>
+
+          {/* Main content container */}
+          <div
+            className={`flex-1 flex flex-col items-center justify-center relative z-10 transition-opacity duration-1000
+            ${imagesLoaded ? "opacity-100 max-h-full" : "opacity-0 pointer-events-none max-h-0"}`}
+          >
             <div className="w-full max-w-[85rem]">
               <section className="space-y-3 transition-transform duration-200 origin-left">
                 <h1 className="text-2xl font-medium text-foreground">
@@ -158,7 +231,9 @@ const Index = () => {
                   little things, lately
                 </h2>
 
-                <div className="grid grid-cols-1 w-full sm:grid-cols-3 gap-5">
+                <div
+                  className={`grid grid-cols-1 w-full sm:grid-cols-3 gap-5 transition-opacity duration-300`}
+                >
                   {/* Project Card 1 */}
                   <div
                     className="flex flex-col rounded-xl w-full bg-card/20 backdrop-blur-[1px] 
@@ -184,7 +259,6 @@ const Index = () => {
                             }
                             alt={`${randomProjects[0].title} preview`}
                             className="absolute inset-0 w-full h-full object-cover"
-                            loading="lazy"
                           />
 
                           <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted/20" />
@@ -241,7 +315,6 @@ const Index = () => {
                             src="https://img.youtube.com/vi/j44mYY3tC10/maxresdefault.jpg"
                             alt="Project video thumbnail"
                             className="absolute inset-0 w-full h-full object-cover"
-                            loading="lazy"
                           />
 
                           {/* Soft overlay */}
@@ -302,7 +375,6 @@ const Index = () => {
                             }
                             alt={`${randomProjects[1].title} preview`}
                             className="absolute inset-0 w-full h-full object-cover"
-                            loading="lazy"
                           />
 
                           <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted/20" />
