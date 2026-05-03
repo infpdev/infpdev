@@ -1,9 +1,8 @@
-# infpdev - requests
+## infpdev - [infpdev.netlify.app](https://infpdev.netlify.app)
+hey, i'm dev
 
-This repo hosts my personal site- a small space where I share things I build and a page for requests.
+i build silly stuff
 
-It’s static, intentionally simple, and updated whenever I feel like tweaking something.
+simple, sometimes useful, sometimes not
 
-Deployed via Netlify and kept here mainly for versioning.
-
-Nothing fancy, just me.
+p.s. yes - cats are important \<3
