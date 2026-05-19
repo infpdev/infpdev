@@ -249,7 +249,7 @@ const Index = () => {
                           }
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
+                            className="group relative mb-3 flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/30"
                         >
                           <img
                             src={
@@ -308,7 +308,7 @@ const Index = () => {
                           href="https://www.youtube.com/watch?v=j44mYY3tC10"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
+                          className="group relative mb-3 flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/30"
                         >
                           {/* Thumbnail */}
                           <img
@@ -365,7 +365,7 @@ const Index = () => {
                           }
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="group aspect-video rounded-md bg-muted/30 mb-3 overflow-hidden flex items-center justify-center relative select-auto"
+                          className="group relative mb-3 flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/30"
                         >
                           <img
                             src={
