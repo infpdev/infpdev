@@ -249,7 +249,7 @@ const Index = () => {
                           }
                           target="_blank"
                           rel="noopener noreferrer"
-                            className="group relative mb-3 flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/30"
+                          className="group relative mb-3 flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/30"
                         >
                           <img
                             src={
@@ -258,10 +258,9 @@ const Index = () => {
                                 : `https://img.youtube.com/vi/${randomProjects[0].videoId}/sddefault.jpg`
                             }
                             alt={`${randomProjects[0].title} preview`}
-                            className="absolute inset-0 w-full h-full object-cover"
+                            className="absolute inset-0 w-full h-full object-cover opacity-70"
                           />
 
-                          <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted/20" />
                           {randomProjects[0].hasVideo ? (
                             <div className="relative z-10 w-12 h-12 rounded-full opacity-0 group-hover:opacity-100 transition-all bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
                               <ExternalLink className="w-5 h-5 text-primary fill-primary" />
@@ -314,11 +313,8 @@ const Index = () => {
                           <img
                             src="https://img.youtube.com/vi/j44mYY3tC10/maxresdefault.jpg"
                             alt="Project video thumbnail"
-                            className="absolute inset-0 w-full h-full object-cover"
+                            className="absolute inset-0 w-full h-full object-cover opacity-70"
                           />
-
-                          {/* Soft overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-muted/60 to-muted/30" />
 
                           {/* Play button */}
                           <div className="relative z-10 w-12 opacity-0 group-hover:opacity-100 transition-all h-12 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
@@ -374,10 +370,8 @@ const Index = () => {
                                 : `https://img.youtube.com/vi/${randomProjects[1].videoId}/sddefault.jpg`
                             }
                             alt={`${randomProjects[1].title} preview`}
-                            className="absolute inset-0 w-full h-full object-cover"
+                            className="absolute inset-0 w-full h-full object-cover opacity-70"
                           />
-
-                          <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted/20" />
 
                           {randomProjects[1].hasVideo ? (
                             <div className="relative z-10 w-12 h-12 rounded-full opacity-0 group-hover:opacity-100 transition-all bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
