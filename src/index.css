@@ -141,7 +141,7 @@ button,
         auto !important;
 }
 
-.cursor-opaque {
+.cursor-small {
     cursor:
         url("./assets/cursorOpaque.png") 12 12,
         auto !important;

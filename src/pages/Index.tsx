@@ -2,6 +2,7 @@ import { Github, ExternalLink, Copy, Check, Youtube } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { projects } from "../assets/projects";
 import { AmbientAudioToggle } from "@/components/AmbientAudioToggle";
+import { DownloadCounter } from "@/components/DownloadCounter";
 import { Ded } from "@/components/Ded";
 import Redirect from "@/components/Redirect";
 // Import all background images - add more with bg-X.png naming
@@ -337,14 +338,17 @@ const Index = () => {
                       a small toolkit for gtao heists <br></br>fixes the PgUp
                       bug and solves fingerprint puzzles.
                     </p>
-                    <a
-                      href="https://github.com/infpdev/gtao-heist-toolkit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-auto text-xs text-primary/80 transition-colors duration-200 hover:text-primary w-fit select-auto"
-                    >
-                      view on github →
-                    </a>
+                    <div className="mt-auto flex items-center gap-3 text-xs">
+                      <a
+                        href="https://github.com/infpdev/gtao-heist-toolkit"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary/80 transition-colors duration-200 hover:text-primary w-fit select-auto"
+                      >
+                        view on github →
+                      </a>
+                      <DownloadCounter repo="gtao-heist-toolkit" />
+                    </div>
                   </div>
                   {/* Project Card 3 */}
                   <div
@@ -429,7 +433,7 @@ const Index = () => {
                     {/* pfp next to Discord */}
 
                     <div
-                      className={`transition-all cursor-opaque rounded-full bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden ${
+                      className={`transition-all cursor-small rounded-full bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden ${
                         isMobile
                           ? "w-[11vw] h-[11vw]"
                           : "w-5 h-5 hover:w-14 hover:h-14"
