@@ -158,7 +158,7 @@ const Index = () => {
 
           <div
             className={`w-full h-[100dvh] rounded-lg backdrop-blur-sm z-10 text-muted-foreground flex flex-col transition-opacity duration-500
-             items-center gap-5 absolute justify-center
+             items-center gap-5 fixed justify-center
              ${showLoader ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           >
             <span>waking up the meowls</span>
@@ -173,7 +173,10 @@ const Index = () => {
           >
             <div className="w-full max-w-[85rem]">
               <section className="space-y-3 transition-transform duration-200 origin-left">
-                <h1 className="text-2xl font-medium text-foreground">
+                <h1
+                  className={`font-medium text-foreground 
+                  ${isMobile ? "text-xl ml-2" : "text-2xl"}`}
+                >
                   hey, i'm dev (dave's okay too ^^)
                 </h1>
               </section>
@@ -437,17 +440,21 @@ const Index = () => {
                     {/* pfp next to Discord */}
 
                     <div
-                      className={`transition-all cursor-small rounded-full bg-muted/50 border border-border/50 flex items-center justify-center overflow-hidden ${
-                        isMobile
-                          ? "w-[11vw] h-[11vw]"
-                          : "w-5 h-5 hover:w-14 hover:h-14"
+                      className={`transition-all group cursor-small overflow-visible flex items-center justify-center ${
+                        isMobile ? "w-[11vw] h-[11vw]" : "w-5 h-5 hover:w-14"
                       }`}
                     >
-                      <img
-                        src={pfp}
-                        alt="pfp"
-                        className="w-full h-full object-cover"
-                      ></img>
+                      <div
+                        className={`w-5 h-5 transition-transform rounded-full overflow-hidden ${
+                          isMobile ? "scale-[2.4]" : "group-hover:scale-[2.8]"
+                        }`}
+                      >
+                        <img
+                          src={pfp}
+                          alt="pfp"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     </div>
 
                     <div className="flex group  justify-center items-center gap-1 ml-2">
@@ -457,63 +464,104 @@ const Index = () => {
                       {isMobile ? (
                         <button
                           onClick={copyUsername}
-                          className="ml-1 px-2 py-1 rounded bg-secondary/80 hover:bg-secondary text-xs text-secondary-foreground flex items-center gap-1 select-auto cursor-pointer"
+                          className={`ml-1 px-2 py-1 rounded bg-secondary/80 hover:bg-secondary text-xs text-secondary-foreground flex items-center gap-1 select-auto cursor-pointer overflow-hidden transition-all duration-300 ${
+                            copied ? "w-[70px]" : "w-[60px]"
+                          }`}
                         >
-                          {copied ? (
-                            <>
-                              <Check className="w-3 h-3" />
-                              copied
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-3 h-3" />
-                              copy
-                            </>
-                          )}
+                          <div className="relative w-3 h-3">
+                            <Copy
+                              className={`absolute inset-0 w-3 h-3 transition-all duration-200 ${
+                                copied
+                                  ? "opacity-0 scale-75"
+                                  : "opacity-100 scale-100"
+                              }`}
+                            />
+
+                            <Check
+                              className={`absolute inset-0 w-3 h-3 transition-all duration-200 ${
+                                copied
+                                  ? "opacity-100 scale-100"
+                                  : "opacity-0 scale-75"
+                              }`}
+                            />
+                          </div>
+
+                          <span>{copied ? "copied" : "copy"}</span>
                         </button>
                       ) : (
                         <button
                           onClick={copyUsername}
-                          className={`flex group-hover:ml-2 group-hover:px-2 gap-1 py-1 rounded bg-secondary/80 hover:bg-secondary text-xs text-secondary-foreground items-center select-auto cursor-pointer 
-                    overflow-hidden w-0 opacity-0  group-hover:opacity-100 transition-all duration-300 ease-out ${
-                      copied
-                        ? "px-2 group-hover:w-[68px] mr-3"
-                        : "group-hover:pl-2 group-hover:w-14"
-                    }`}
+                          className={`flex group-hover:ml-2 group-hover:px-2 gap-1 py-1 rounded bg-secondary/80
+                             hover:bg-secondary text-xs text-secondary-foreground items-center select-auto cursor-pointer 
+                              overflow-hidden w-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out ${
+                                copied
+                                  ? "px-2 group-hover:w-[70px] mr-3"
+                                  : "group-hover:px-2 group-hover:w-[60px]"
+                              }`}
                         >
-                          {copied ? (
-                            <>
-                              <Check className="w-3 h-3" />
-                              copied
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-3 h-3" />
-                              copy
-                            </>
-                          )}
+                          <div className="relative w-3 h-3 shrink-0">
+                            <Copy
+                              className={`absolute inset-0 w-3 h-3 transition-all duration-200 ${
+                                copied
+                                  ? "opacity-0 scale-75"
+                                  : "opacity-100 scale-100"
+                              }`}
+                            />
+
+                            <Check
+                              className={`absolute inset-0 w-3 h-3 transition-all duration-200 ${
+                                copied
+                                  ? "opacity-100 scale-100"
+                                  : "opacity-0 scale-75"
+                              }`}
+                            />
+                          </div>
+
+                          <span>{copied ? "copied" : "copy"}</span>
                         </button>
                       )}
                     </div>
                   </div>
-                  <a
-                    href="https://github.com/infpdev"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 transition-colors duration-200 hover:text-primary select-auto"
-                  >
-                    <Github className="w-4 h-4" />
-                    <span>infpdev</span>
-                  </a>
-                  <a
-                    href="https://youtube.com/@dev17"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 transition-colors duration-200 hover:text-primary select-auto"
-                  >
-                    <Youtube className="w-5 h-5" />
-                    <span>dev</span>
-                  </a>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href="https://github.com/infpdev"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 transition-colors duration-200 hover:text-primary select-auto"
+                      >
+                        <Github className="w-4 h-4" />
+                        <span>infpdev</span>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="bottom"
+                      className="text-xs"
+                      sideOffset={6}
+                    >
+                      GitHub
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href="https://youtube.com/@dev17"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 transition-colors duration-200 hover:text-primary select-auto"
+                      >
+                        <Youtube className="w-5 h-5" />
+                        <span>dev</span>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="bottom"
+                      className="text-xs"
+                      sideOffset={6}
+                    >
+                      YouTube
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </section>
             </div>

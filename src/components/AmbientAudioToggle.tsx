@@ -1,20 +1,25 @@
 import { Volume2, VolumeX } from "lucide-react";
 import { useAmbientAudio } from "@/hooks/useAmbientAudio";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { Tooltip } from "./ui/tooltip";
 
 export const AmbientAudioToggle = ({ isMobile }) => {
   const { isPlaying, toggle } = useAmbientAudio();
   const [showHint, setShowHint] = useState(false);
+  const isPlayingRef = useRef(isPlaying);
 
   useEffect(() => {
-    // Show hint after 3 seconds
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
     const showTimer = setTimeout(() => {
-      setShowHint(true);
+      if (!isPlayingRef.current) {
+        setShowHint(true);
+      }
     }, 3000);
 
-    // Hide hint after 8 seconds total (3s delay + 5s visible)
     const hideTimer = setTimeout(
       () => {
         setShowHint(false);
@@ -32,7 +37,7 @@ export const AmbientAudioToggle = ({ isMobile }) => {
     <TooltipProvider>
       <div
         className={`fixed  z-50 flex items-center gap-2 ${
-          isMobile ? "flex-col top-4 right-2" : "top-6 right-6"
+          isMobile ? "flex-col top-4 right-4" : "top-6 right-6"
         }`}
       >
         {isMobile && (

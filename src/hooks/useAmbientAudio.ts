@@ -92,7 +92,9 @@ export const useAmbientAudio = () => {
       currentTierRef.current += 1;
       audio.src = nextTrackRef.current;
       audio.load();
-      audio.play();
+      audio.play().catch(() => {
+        setIsPlaying(false);
+      });
       fadeIn(audio);
       nextTrackRef.current = null;
     }
@@ -112,14 +114,18 @@ export const useAmbientAudio = () => {
       audio.addEventListener("timeupdate", handleTimeUpdate);
       audio.addEventListener("ended", handleTrackEnd);
 
+      setIsPlaying(true);
+
       audio
         .play()
         .then(() => {
           fadeIn(audio);
-          setIsPlaying(true);
           setHasInteracted(true);
         })
-        .catch(console.error);
+        .catch((err) => {
+          console.error(err);
+          setIsPlaying(false);
+        });
 
       return;
     }
@@ -131,12 +137,12 @@ export const useAmbientAudio = () => {
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio
-        .play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch(console.error);
+      setIsPlaying(true);
+
+      audio.play().catch((err) => {
+        console.error(err);
+        setIsPlaying(false);
+      });
     }
   }, [hasInteracted, isPlaying, fadeIn, handleTimeUpdate, handleTrackEnd]);
 

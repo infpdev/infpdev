@@ -3,150 +3,155 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        /* Base surfaces */
-        --background: 240 6% 10%;
-        --foreground: 40 12% 88%;
+  :root {
+    /* Base surfaces */
+    --background: 240 6% 10%;
+    --foreground: 40 12% 88%;
 
-        --card: 240 5% 13%;
-        --card-foreground: 40 12% 88%;
+    --card: 240 5% 13%;
+    --card-foreground: 40 12% 88%;
 
-        --popover: 240 5% 13%;
-        --popover-foreground: 40 12% 88%;
+    --popover: 240 5% 13%;
+    --popover-foreground: 40 12% 88%;
 
-        /* Primary (used sparingly) */
-        --primary: 40 22% 62%;
-        --primary-foreground: 240 6% 10%;
+    /* Primary (used sparingly) */
+    --primary: 40 22% 62%;
+    --primary-foreground: 240 6% 10%;
 
-        /* Secondary surfaces */
-        --secondary: 240 4% 18%;
-        --secondary-foreground: 40 10% 78%;
+    /* Secondary surfaces */
+    --secondary: 240 4% 18%;
+    --secondary-foreground: 40 10% 78%;
 
-        /* Muted / low emphasis */
-        --muted: 240 4% 20%;
-        --muted-foreground: 40 6% 58%;
+    /* Muted / low emphasis */
+    --muted: 240 4% 20%;
+    --muted-foreground: 40 6% 58%;
 
-        /* Accent (very soft beige, no glow) */
-        --accent: 40 18% 48%;
-        --accent-foreground: 40 14% 92%;
+    /* Accent (very soft beige, no glow) */
+    --accent: 40 18% 48%;
+    --accent-foreground: 40 14% 92%;
 
-        /* Destructive (leave mostly untouched) */
-        --destructive: 0 55% 50%;
-        --destructive-foreground: 40 14% 92%;
+    /* Destructive (leave mostly untouched) */
+    --destructive: 0 55% 50%;
+    --destructive-foreground: 40 14% 92%;
 
-        /* Borders & focus */
-        --border: 240 4% 22%;
-        --input: 240 4% 22%;
-        --ring: 40 18% 55%;
+    /* Borders & focus */
+    --border: 240 4% 22%;
+    --input: 240 4% 22%;
+    --ring: 40 18% 55%;
 
-        /* Sidebar (matches rest, no extra punch) */
-        --sidebar-background: 240 6% 10%;
-        --sidebar-foreground: 40 12% 88%;
-        --sidebar-primary: 40 22% 62%;
-        --sidebar-primary-foreground: 240 6% 10%;
-        --sidebar-accent: 240 4% 18%;
-        --sidebar-accent-foreground: 40 12% 88%;
-        --sidebar-border: 240 4% 22%;
-        --sidebar-ring: 40 18% 55%;
-    }
+    /* Sidebar (matches rest, no extra punch) */
+    --sidebar-background: 240 6% 10%;
+    --sidebar-foreground: 40 12% 88%;
+    --sidebar-primary: 40 22% 62%;
+    --sidebar-primary-foreground: 240 6% 10%;
+    --sidebar-accent: 240 4% 18%;
+    --sidebar-accent-foreground: 40 12% 88%;
+    --sidebar-border: 240 4% 22%;
+    --sidebar-ring: 40 18% 55%;
+  }
 
-    .dark {
-        /* Base surfaces */
-        --background: 240 6% 10%;
-        --foreground: 40 12% 88%;
+  .dark {
+    /* Base surfaces */
+    --background: 240 6% 10%;
+    --foreground: 40 12% 88%;
 
-        --card: 240 5% 13%;
-        --card-foreground: 40 12% 88%;
+    --card: 240 5% 13%;
+    --card-foreground: 40 12% 88%;
 
-        --popover: 240 5% 13%;
-        --popover-foreground: 40 12% 88%;
+    --popover: 240 5% 13%;
+    --popover-foreground: 40 12% 88%;
 
-        /* Primary (used sparingly) */
-        --primary: 40 22% 62%;
-        --primary-foreground: 240 6% 10%;
+    /* Primary (used sparingly) */
+    --primary: 40 22% 62%;
+    --primary-foreground: 240 6% 10%;
 
-        /* Secondary surfaces */
-        --secondary: 240 4% 18%;
-        --secondary-foreground: 40 10% 78%;
+    /* Secondary surfaces */
+    --secondary: 240 4% 18%;
+    --secondary-foreground: 40 10% 78%;
 
-        /* Muted / low emphasis */
-        --muted: 240 4% 20%;
-        --muted-foreground: 40 6% 58%;
+    /* Muted / low emphasis */
+    --muted: 240 4% 20%;
+    --muted-foreground: 40 6% 58%;
 
-        /* Accent (very soft beige, no glow) */
-        --accent: 40 18% 48%;
-        --accent-foreground: 40 14% 92%;
+    /* Accent (very soft beige, no glow) */
+    --accent: 40 18% 48%;
+    --accent-foreground: 40 14% 92%;
 
-        /* Destructive (leave mostly untouched) */
-        --destructive: 0 55% 50%;
-        --destructive-foreground: 40 14% 92%;
+    /* Destructive (leave mostly untouched) */
+    --destructive: 0 55% 50%;
+    --destructive-foreground: 40 14% 92%;
 
-        /* Borders & focus */
-        --border: 240 4% 22%;
-        --input: 240 4% 22%;
-        --ring: 40 18% 55%;
+    /* Borders & focus */
+    --border: 240 4% 22%;
+    --input: 240 4% 22%;
+    --ring: 40 18% 55%;
 
-        /* Sidebar (matches rest, no extra punch) */
-        --sidebar-background: 240 6% 10%;
-        --sidebar-foreground: 40 12% 88%;
-        --sidebar-primary: 40 22% 62%;
-        --sidebar-primary-foreground: 240 6% 10%;
-        --sidebar-accent: 240 4% 18%;
-        --sidebar-accent-foreground: 40 12% 88%;
-        --sidebar-border: 240 4% 22%;
-        --sidebar-ring: 40 18% 55%;
-    }
+    /* Sidebar (matches rest, no extra punch) */
+    --sidebar-background: 240 6% 10%;
+    --sidebar-foreground: 40 12% 88%;
+    --sidebar-primary: 40 22% 62%;
+    --sidebar-primary-foreground: 240 6% 10%;
+    --sidebar-accent: 240 4% 18%;
+    --sidebar-accent-foreground: 40 12% 88%;
+    --sidebar-border: 240 4% 22%;
+    --sidebar-ring: 40 18% 55%;
+  }
 }
 
 @layer base {
-    * {
-        @apply border-border;
-    }
+  * {
+    @apply border-border;
+  }
 
-    body {
-        @apply bg-background text-foreground font-sans antialiased;
-    }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
 
-    html {
-        scroll-behavior: smooth;
-    }
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 @layer utilities {
-    .text-balance {
-        text-wrap: balance;
-    }
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
 @keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 0.75;
-    }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.75;
+  }
 }
 
 html {
-    cursor:
-        url("./assets/cursor.png") 12 12,
-        auto;
+  cursor:
+    url("./assets/cursor.png") 12 12,
+    auto;
 }
 
 a,
 button,
 .cursor-pointer {
-    cursor:
-        url("./assets/pointer.png") 12 12,
-        auto !important;
+  cursor:
+    url("./assets/pointer.png") 12 12,
+    auto !important;
+}
+
+img, a {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .cursor-small {
-    cursor:
-        url("./assets/cursorOpaque.png") 12 12,
-        auto !important;
+  cursor:
+    url("./assets/cursorOpaque.png") 12 12,
+    auto !important;
 }
 
 .select-text {
-    cursor: text !important;
+  cursor: text !important;
 }
