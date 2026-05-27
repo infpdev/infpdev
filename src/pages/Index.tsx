@@ -83,7 +83,10 @@ const Index = () => {
       const handleImageLoad = () => {
         loadedCount++;
         if (loadedCount === imageUrls.length) {
-          setTimeout(() => setImagesLoaded(true), 500);
+          setTimeout(() => {
+            setImagesLoaded(true);
+            setShowLoader(false);
+          }, 500);
         }
       };
 
@@ -165,7 +168,8 @@ const Index = () => {
           {/* Main content container */}
           <div
             className={`flex-1 flex flex-col items-center justify-center relative z-10 transition-opacity duration-1000
-            ${imagesLoaded ? "opacity-100 max-h-full" : "opacity-0 pointer-events-none max-h-0"}`}
+            ${imagesLoaded ? "opacity-100 max-h-full" : "opacity-0 pointer-events-none max-h-0"}
+            ${isMobile ? "p-4" : ""}`}
           >
             <div className="w-full max-w-[85rem]">
               <section className="space-y-3 transition-transform duration-200 origin-left">

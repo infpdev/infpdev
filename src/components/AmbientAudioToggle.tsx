@@ -31,8 +31,8 @@ export const AmbientAudioToggle = ({ isMobile }) => {
   return (
     <TooltipProvider>
       <div
-        className={`fixed top-6 right-6 z-50 flex items-center gap-2 ${
-          isMobile ? "flex-col" : ""
+        className={`fixed  z-50 flex items-center gap-2 ${
+          isMobile ? "flex-col top-4 right-2" : "top-6 right-6"
         }`}
       >
         {isMobile && (
