@@ -1,7 +1,7 @@
 // import React from "react";
 import { BatteryLow } from "lucide-react";
 
-export const Ded = () => {
+export default function Ded() {
   return (
     <div
       className="
@@ -26,4 +26,4 @@ export const Ded = () => {
       </div>
     </div>
   );
-};
+}

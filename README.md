@@ -1,8 +1,8 @@
 ## infpdev - [infpdev.netlify.app](https://infpdev.netlify.app)
 hey, i'm dev
 
-i build silly stuff
+i like building silly stuff
 
-simple, sometimes useful, sometimes not
+sometimes useful, sometimes not
 
 p.s. yes - cats are important \<3

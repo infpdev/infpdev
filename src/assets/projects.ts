@@ -1,6 +1,7 @@
 import wybmv from "@/assets/wybmv.png";
+import { Project } from "@/components/Projects";
 
-export const projects = [
+export const projects: Project[] = [
   {
     title: "Syncify",
     description:
@@ -11,8 +12,7 @@ export const projects = [
   },
   {
     title: "will you be my valentine?",
-    description:
-      "a page to ask someone out\nsimple, quiet, and a little cute",
+    description: "a page to ask someone out\nsimple, quiet, and a little cute",
     github: "https://github.com/infpdev/wybmv",
     screenshot: wybmv,
     href: "https://wybmv-hehe.netlify.app/",

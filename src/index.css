@@ -141,7 +141,8 @@ button,
     auto !important;
 }
 
-img, a {
+img,
+a {
   -webkit-user-drag: none;
   user-select: none;
 }
@@ -154,4 +155,37 @@ img, a {
 
 .select-text {
   cursor: text !important;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 9999px;
+  background: white;
+  opacity: 0;
+
+  animation:
+    star-fade-in 1s forwards,
+    star-twinkle var(--duration, 2s) ease-in-out infinite;
+}
+
+@keyframes star-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }

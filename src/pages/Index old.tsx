@@ -93,7 +93,7 @@ const Index = () => {
                   <br></br>i learn a lot doing it, and sometimes end up meeting
                   people i vibe with.
                   <br /> p.s. i post random stuff on youtube sometimes :{">"}
-                  <br></br>p.s. also, yes — cats. love 'em.
+                  <br></br>p.s. also, yes - cats. love 'em.
                 </p>
               </section>
 

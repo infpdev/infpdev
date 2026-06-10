@@ -68,12 +68,12 @@ export function DownloadCounter({ repo }: DownloadCounterProps) {
   return downloadCount === null ? null : (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="ml-auto flex items-center gap-1.5 px-2.5 py-1 text-[11px] text-muted-foreground cursor-small select-none">
+        <div className="ml-auto flex items-center gap-1.5 px-2 hover:bg-accent/10 transition-colors rounded-md p-1 text-[11px] text-muted-foreground cursor-small select-none">
           <Download className="h-3.5 w-3.5" />
           <span>{downloadCount.toLocaleString()}</span>
         </div>
       </TooltipTrigger>
-      <TooltipContent side="top" className="text-xs" sideOffset={8}>
+      <TooltipContent side="bottom" className="text-xs" sideOffset={5}>
         <p>total downloads</p>
       </TooltipContent>
     </Tooltip>
