@@ -73,7 +73,7 @@ export function DownloadCounter({ repo }: DownloadCounterProps) {
           <span>{downloadCount.toLocaleString()}</span>
         </div>
       </TooltipTrigger>
-      <TooltipContent side="bottom" className="text-xs" sideOffset={5}>
+      <TooltipContent side="left" className="text-xs" sideOffset={7}>
         <p>total downloads</p>
       </TooltipContent>
     </Tooltip>

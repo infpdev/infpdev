@@ -6,11 +6,13 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ChevronRight, ChevronLeft } from "lucide-react";
+import ProjectsMobileLayout from "./ProjectsMobileLayout";
 
 interface ProjectProps {
   setShowLoader: (show: boolean) => void;
   setImagesLoaded: (loaded: boolean) => void;
+  isMobile: boolean;
 }
 
 export interface Project {
@@ -36,15 +38,33 @@ const STATIC_PROJECT: Project = {
   githubRepoNameForDownloadCounter: "gtao-heist-toolkit",
 };
 
-function Projects({ setShowLoader, setImagesLoaded }: ProjectProps) {
+function Projects({ setShowLoader, setImagesLoaded, isMobile }: ProjectProps) {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
+  const [page, setPage] = useState(0);
 
-  // Select 2 unique random projects
-  const randomProjects = useMemo(() => {
-    const shuffled = [...projects].sort(() => Math.random() - 0.5);
-
-    return [shuffled[0], STATIC_PROJECT, shuffled[1]];
+  const allProjects = useMemo(() => {
+    const sorted = [...projects].sort(() => Math.random() - 0.5);
+    sorted.splice(1, 0, STATIC_PROJECT);
+    return sorted;
   }, []);
+
+  const pageInfo = useMemo(() => {
+    const info: { translate: number }[] = [];
+    let cumulativeAdvance = 0;
+    let idx = 0;
+    while (idx < allProjects.length) {
+      info.push({ translate: (cumulativeAdvance / 3) * 100 });
+      const count = Math.min(3, allProjects.length - idx);
+      const remaining = allProjects.length - (idx + count);
+      if (remaining > 0) {
+        cumulativeAdvance += Math.min(3, remaining);
+      }
+      idx += count;
+    }
+    return info;
+  }, [allProjects]);
+
+  const translatePercent = pageInfo[page]?.translate ?? 0;
 
   // Preload project images
   useEffect(() => {
@@ -52,11 +72,10 @@ function Projects({ setShowLoader, setImagesLoaded }: ProjectProps) {
     const loadImageTimeout = setTimeout(() => {
       setShowLoader(true);
 
-      // Move preloadImages function here
       setImagesLoaded(false);
       const imageUrls: string[] = [];
 
-      randomProjects.forEach((project) => {
+      allProjects.forEach((project) => {
         if (project.hasVideo) {
           imageUrls.push(
             `https://img.youtube.com/vi/${project.videoId}/sddefault.jpg`,
@@ -93,97 +112,141 @@ function Projects({ setShowLoader, setImagesLoaded }: ProjectProps) {
       clearTimeout(loadImageTimeout);
       clearTimeout(showLoaderTimeout);
     };
-  }, [randomProjects, setImagesLoaded, setShowLoader]);
+  }, [allProjects, setImagesLoaded, setShowLoader]);
+
+  if (isMobile)
+    return <ProjectsMobileLayout randomProjects={allProjects.slice(0, 3)} />;
 
   return (
     <div>
-      <div className="w-full flex mt-5 flex-col justify-center items-center">
-        <h2
-          className="text-sm w-fit mb-2 flex items-center justify-center font-medium text-muted-foreground tracking-wide
-                bg-secondary/10 backdrop-blur-sm rounded-lg p-2"
-        >
-          little things, lately
-        </h2>
+      <div className="w-full flex mt-5 flex-col justify-center items-center relative">
+        <div className="grid w-full grid-cols-3 items-center mb-2">
+          <div /> {/* left spacer */}
+          <h2
+            className="justify-self-center text-sm font-medium text-muted-foreground tracking-wide
+               bg-secondary/10 backdrop-blur-sm rounded-lg p-2"
+          >
+            little things, lately
+          </h2>
+          <div className="justify-self-end mr-5 flex items-center gap-2">
+            <span className="text-sm text-muted-foreground opacity-70">
+              {page + 1}/{pageInfo.length}
+            </span>
 
-        <div
-          className={`grid grid-cols-1 w-full sm:grid-cols-3 gap-7 transition-opacity duration-300`}
-        >
-          {/* Project Cards*/}
-
-          {randomProjects.map((project) => (
-            <div
-              key={project.title}
-              className="flex flex-col rounded-xl w-full bg-background/50 aspect-video
-                  border border-border p-4 transition-colors duration-200 hover:bg-secondary/30"
-            >
-              <a
-                onMouseEnter={() => setHoveredProject(project.title)}
-                onMouseLeave={() => setHoveredProject(null)}
-                href={
-                  !project.hasVideo
-                    ? project.href
-                    : `https://youtu.be/${project.videoId}`
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative mb-3 flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/30"
-              >
-                <img
-                  src={
-                    !project.hasVideo
-                      ? project.screenshot
-                      : `https://img.youtube.com/vi/${project.videoId}/sddefault.jpg`
-                  }
-                  alt={`${project.title} preview`}
-                  className="absolute inset-0 w-full h-full object-cover opacity-80 backdrop-blur-sm"
-                />
-                <Tooltip open={hoveredProject === project.title}>
-                  <TooltipTrigger asChild>
-                    {project.hasVideo ? (
-                      <div className="relative z-10 w-12 h-12 rounded-full opacity-0 group-hover:opacity-100 transition-all bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
-                        <ExternalLink className="w-5 h-5 text-primary fill-primary" />
-                      </div>
-                    ) : (
-                      <div className="p-5" />
-                    )}
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="top"
-                    className="text-xs"
-                    sideOffset={15}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex items-center gap-2">
+                  <button
+                    onClick={() =>
+                      setPage(
+                        (p) => (p - 1 + pageInfo.length) % pageInfo.length,
+                      )
+                    }
                   >
-                    {project.hasVideo ? "watch on youtube" : "visit site"}
-                  </TooltipContent>
-                </Tooltip>
-              </a>
+                    <ChevronLeft className="bg-foreground/10 cursor-small rounded-md w-6 h-6 text-muted-foreground opacity-50 hover:opacity-100 transition-opacity" />
+                  </button>
+                  <button
+                    onClick={() => setPage((p) => (p + 1) % pageInfo.length)}
+                  >
+                    <ChevronRight className="bg-foreground/10 cursor-small rounded-md w-6 h-6 text-muted-foreground opacity-50 hover:opacity-100 transition-opacity" />
+                  </button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="text-xs" sideOffset={15}>
+                Show more
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
 
-              <h3 className="font-medium text-card-foreground mb-1">
-                {project.title}
-              </h3>
-
-              <p className="text-sm text-muted-foreground mb-2 whitespace-pre-wrap">
-                {project.description}
-              </p>
-              <div className="mt-auto relative items-center gap-3 text-xs">
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto text-xs text-primary/80 transition-colors w-fit duration-200 hover:text-primary select-auto"
+        {/* Project Cards*/}
+        <div className="overflow-hidden w-full">
+          {/* Gap is 1% so that the card width can take 33.333% - 1% */}
+          <div
+            className="flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] gap-[1%]"
+            style={{
+              transform: `translateX(-${translatePercent}%)`,
+            }}
+          >
+            {allProjects.map((project) => (
+              // Width is 32.333% to account for 3 cards and 2% total gap between them
+              <div
+                key={project.title}
+                className="w-full sm:w-[32.56%] flex-shrink-0"
+              >
+                <div
+                  className="flex flex-col rounded-xl w-full bg-background/50 aspect-video
+                    border border-border p-4 transition-colors duration-200 hover:bg-secondary/30"
                 >
-                  view on github →
-                </a>
-                {project.githubRepoNameForDownloadCounter && (
-                  <div className="absolute right-0 -top-1">
-                    <DownloadCounter
-                      repo={project.githubRepoNameForDownloadCounter}
+                  <a
+                    onMouseEnter={() => setHoveredProject(project.title)}
+                    onMouseLeave={() => setHoveredProject(null)}
+                    href={
+                      !project.hasVideo
+                        ? project.href
+                        : `https://youtu.be/${project.videoId}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative mb-3 flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/30"
+                  >
+                    <img
+                      src={
+                        !project.hasVideo
+                          ? project.screenshot
+                          : `https://img.youtube.com/vi/${project.videoId}/sddefault.jpg`
+                      }
+                      alt={`${project.title} preview`}
+                      className="absolute inset-0 w-full h-full object-cover opacity-80 backdrop-blur-sm"
                     />
+                    <Tooltip open={hoveredProject === project.title}>
+                      <TooltipTrigger asChild>
+                        {project.hasVideo ? (
+                          <div className="relative z-10 w-12 h-12 rounded-full opacity-0 group-hover:opacity-100 transition-all bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
+                            <ExternalLink className="w-5 h-5 text-primary fill-primary" />
+                          </div>
+                        ) : (
+                          <div className="p-5" />
+                        )}
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="text-xs"
+                        sideOffset={15}
+                      >
+                        {project.hasVideo ? "watch on youtube" : "visit site"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </a>
+
+                  <h3 className="font-medium text-card-foreground mb-1">
+                    {project.title}
+                  </h3>
+
+                  <p className="text-sm text-muted-foreground mb-2 whitespace-pre-wrap">
+                    {project.description}
+                  </p>
+                  <div className="mt-auto relative items-center gap-3 text-xs">
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-auto text-xs text-primary/80 transition-colors w-fit duration-200 hover:text-primary select-auto"
+                    >
+                      view on github →
+                    </a>
+                    {project.githubRepoNameForDownloadCounter && (
+                      <div className="absolute right-0 -top-1">
+                        <DownloadCounter
+                          repo={project.githubRepoNameForDownloadCounter}
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          ))}
-          {/* <span className="mb-[100%]"></span> */}
+            ))}
+          </div>
         </div>
       </div>
     </div>

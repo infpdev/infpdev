@@ -65,6 +65,7 @@ const Index = () => {
           <Projects
             setShowLoader={setShowLoader}
             setImagesLoaded={setImagesLoaded}
+            isMobile={isMobile}
           />
 
           {/* Reach out - below both columns */}
