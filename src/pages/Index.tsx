@@ -55,9 +55,9 @@ const Index = () => {
       <div
         className={`flex-1 flex flex-col max-h-full items-center justify-center relative z-40 transition-opacity duration-1000
             ${imagesLoaded ? "opacity-100 " : "opacity-0 pointer-events-none"}
-            ${isMobile ? "p-4" : "p-[2%]"}`}
+            ${isMobile ? "p-4" : ""}`}
       >
-        <div className="w-full max-w-[95vw] min-[1900px]:max-w-[75dvw]">
+        <div className="w-full max-w-[75dvw]">
           {/* About Section */}
           <About isMobile={isMobile} />
 
