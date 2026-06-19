@@ -197,7 +197,7 @@ function Projects({ setShowLoader, setImagesLoaded, isMobile }: ProjectProps) {
                           : `https://img.youtube.com/vi/${project.videoId}/sddefault.jpg`
                       }
                       alt={`${project.title} preview`}
-                      className="absolute inset-0 w-full h-full object-cover opacity-80 backdrop-blur-sm"
+                      className="absolute inset-0 w-full h-full object-cover opacity-80"
                     />
                     <Tooltip open={hoveredProject === project.title}>
                       <TooltipTrigger asChild>

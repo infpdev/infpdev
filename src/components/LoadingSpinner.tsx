@@ -3,7 +3,7 @@ function LoadingSpinner({ showLoader }: { showLoader: boolean }) {
     <div>
       <>
         <div
-          className={`fixed inset-0 w-full h-[100dvh] rounded-lg backdrop-blur-sm text-muted-foreground flex flex-col transition-opacity duration-500
+          className={`fixed inset-0 w-full h-[100dvh] bg-background/70 rounded-lg text-muted-foreground flex flex-col transition-opacity duration-500
              items-center gap-5 justify-center
              ${showLoader ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         >

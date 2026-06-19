@@ -57,7 +57,7 @@ const Index = () => {
             ${imagesLoaded ? "opacity-100 " : "opacity-0 pointer-events-none"}
             ${isMobile ? "p-4" : ""}`}
       >
-        <div className="w-full max-w-[75dvw]">
+        <div className={`w-full ${isMobile ? "" : "max-w-[75dvw]"}`}>
           {/* About Section */}
           <About isMobile={isMobile} />
 

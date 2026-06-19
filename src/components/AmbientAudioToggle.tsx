@@ -62,7 +62,7 @@ export default function AmbientAudioToggle({
       )}
       {/* Hint text */}
       <div
-        className={`pointer-events-none flex items-center    transition-opacity duration-500 ${
+        className={`pointer-events-none flex items-center transition-opacity duration-500 ${
           showHint ? "opacity-100" : "opacity-0"
         }
         ${

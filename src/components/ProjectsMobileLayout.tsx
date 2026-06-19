@@ -12,7 +12,7 @@ function ProjectsMobileLayout({
       <div className="w-full flex mt-5 flex-col justify-center items-center">
         <h2
           className="text-sm w-fit mb-2 flex items-center justify-center font-medium text-muted-foreground tracking-wide
-                bg-secondary/10 backdrop-blur-sm rounded-lg p-2"
+                bg-secondary/10 rounded-lg p-2"
         >
           little things, lately
         </h2>
@@ -43,7 +43,7 @@ function ProjectsMobileLayout({
                       : `https://img.youtube.com/vi/${project.videoId}/sddefault.jpg`
                   }
                   alt={`${project.title} preview`}
-                  className="absolute inset-0 w-full h-full object-cover opacity-80 backdrop-blur-sm"
+                  className="absolute inset-0 w-full h-full object-cover opacity-80"
                 />
                 {project.hasVideo ? (
                   <div className="relative z-10 w-12 h-12 rounded-full opacity-0 group-hover:opacity-100 transition-all bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 duration-200">
