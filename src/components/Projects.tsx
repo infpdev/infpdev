@@ -10,6 +10,7 @@ import { ExternalLink, ChevronRight, ChevronLeft } from "lucide-react";
 import ProjectsMobileLayout from "./ProjectsMobileLayout";
 
 interface ProjectProps {
+  imagesLoaded: boolean;
   setShowLoader: (show: boolean) => void;
   setImagesLoaded: (loaded: boolean) => void;
   isMobile: boolean;
@@ -38,7 +39,12 @@ const STATIC_PROJECT: Project = {
   githubRepoNameForDownloadCounter: "gtao-heist-toolkit",
 };
 
-function Projects({ setShowLoader, setImagesLoaded, isMobile }: ProjectProps) {
+function Projects({
+  setShowLoader,
+  setImagesLoaded,
+  isMobile,
+  imagesLoaded,
+}: ProjectProps) {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
   const [page, setPage] = useState(0);
 
@@ -115,7 +121,12 @@ function Projects({ setShowLoader, setImagesLoaded, isMobile }: ProjectProps) {
   }, [allProjects, setImagesLoaded, setShowLoader]);
 
   if (isMobile)
-    return <ProjectsMobileLayout randomProjects={allProjects.slice(0, 3)} />;
+    return (
+      <ProjectsMobileLayout
+        randomProjects={allProjects.slice(0, 3)}
+        imagesLoaded={imagesLoaded}
+      />
+    );
 
   return (
     <div>

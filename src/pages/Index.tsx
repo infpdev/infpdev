@@ -63,6 +63,7 @@ const Index = () => {
 
           {/* Projects, below the grid */}
           <Projects
+            imagesLoaded={imagesLoaded}
             setShowLoader={setShowLoader}
             setImagesLoaded={setImagesLoaded}
             isMobile={isMobile}

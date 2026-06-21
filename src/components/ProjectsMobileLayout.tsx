@@ -4,11 +4,25 @@ import { DownloadCounter } from "@/components/DownloadCounter";
 
 function ProjectsMobileLayout({
   randomProjects,
+  imagesLoaded,
 }: {
   randomProjects: Project[];
+  imagesLoaded: boolean;
 }) {
   return (
-    <div>
+    <div
+      style={
+        !imagesLoaded
+          ? {
+              position: "fixed",
+              inset: 0,
+              visibility: "hidden",
+              overflow: "hidden",
+              pointerEvents: "none",
+            }
+          : undefined
+      }
+    >
       <div className="w-full flex mt-5 flex-col justify-center items-center">
         <h2
           className="text-sm w-fit mb-2 flex items-center justify-center font-medium text-muted-foreground tracking-wide
