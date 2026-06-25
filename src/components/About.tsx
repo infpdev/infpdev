@@ -1,7 +1,13 @@
-const About = ({ isMobile }: { isMobile: boolean }) => {
+const About = ({
+  isMobile,
+  isCompact,
+}: {
+  isMobile: boolean;
+  isCompact: boolean;
+}) => {
   return (
-    <div>
-      <section className="space-y-3 transition-transform duration-200 origin-left">
+    <div className={`${isCompact ? "space-y-2.5" : "space-y-5"}`}>
+      <section>
         <h1
           className={`font-medium text-foreground 
                   ${isMobile ? "text-xl ml-2" : "text-2xl"}`}
@@ -14,11 +20,14 @@ const About = ({ isMobile }: { isMobile: boolean }) => {
       </section>
 
       {/* Main content grid - responsive, both columns in same container */}
-      <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-[41%_3%_55.6%]">
         {/* Left column */}
-        <div className="space-y-10 flex flex-col">
+        <div className="space-y-10 flex flex-col lg:col-start-1">
           {/* About me - brief */}
-          <div className="flex text-[15px] flex-col justify-center p-4 rounded-lg bg-background/60 border border-border/50 lg:flex-1">
+          <div
+            className={`flex flex-col text-[15px] justify-center p-4 rounded-lg bg-background/60 border border-border/50 lg:flex-1 
+            ${isCompact ? "compact" : ""}`}
+          >
             <p className="text-muted-foreground leading-relaxed">
               i'm an introverted developer who likes building small, silly
               stuff.
@@ -36,12 +45,16 @@ const About = ({ isMobile }: { isMobile: boolean }) => {
         </div>
 
         {/* Right column */}
-        <div className="space-y-8 flex flex-col">
+        <div className="space-y-8 flex flex-col lg:col-start-3">
           <div className="flex flex-col justify-center p-4 rounded-lg bg-background/60 border border-border/50 lg:flex-1">
-            <h3 className="text-[15px] text-muted-foreground tracking-wide mb-3">
+            <h3
+              className={`text-base text-muted-foreground tracking-wide mb-3 ${isCompact ? "compact" : ""}`}
+            >
               (if you're still here, here's a bit more)
             </h3>
-            <p className="text-[15px] text-muted-foreground leading-relaxed">
+            <p
+              className={`text-[15px] text-muted-foreground leading-relaxed ${isCompact ? "compact" : ""}`}
+            >
               if i'm online, i'm probably fixing something that annoyed me or
               just looking for a new distraction.
               <br />

@@ -7,7 +7,13 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 
-function Socials({ isMobile }: { isMobile: boolean }) {
+function Socials({
+  isMobile,
+  isCompact,
+}: {
+  isMobile: boolean;
+  isCompact: boolean;
+}) {
   const [copied, setCopied] = useState(false);
   const discordUsername = ".dev17";
   const pfp = "/favicon.png";
@@ -41,8 +47,9 @@ function Socials({ isMobile }: { isMobile: boolean }) {
 
   return (
     <section
-      className={`mt-12 w-full items-center flex flex-col space-y-3
-                  ${!isMobile ? "text-base" : "text-sm"}`}
+      className={`w-full items-center flex flex-col space-y-3
+                  ${!isMobile ? "text-base" : "text-sm"}
+                  ${isCompact ? "mt-6" : "mt-12"}`}
     >
       <h2 className=" font-medium text-muted-foreground tracking-wide">
         i'm usually around here

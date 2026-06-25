@@ -189,3 +189,8 @@ a {
     opacity: 0.6;
   }
 }
+
+.compact {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}

@@ -10,6 +10,7 @@ import { ExternalLink, ChevronRight, ChevronLeft } from "lucide-react";
 import ProjectsMobileLayout from "./ProjectsMobileLayout";
 
 interface ProjectProps {
+  isCompact: boolean;
   imagesLoaded: boolean;
   setShowLoader: (show: boolean) => void;
   setImagesLoaded: (loaded: boolean) => void;
@@ -44,6 +45,7 @@ function Projects({
   setImagesLoaded,
   isMobile,
   imagesLoaded,
+  isCompact,
 }: ProjectProps) {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -130,8 +132,13 @@ function Projects({
 
   return (
     <div>
-      <div className="w-full flex mt-5 flex-col justify-center items-center relative">
-        <div className="grid w-full grid-cols-3 items-center mb-2">
+      <div
+        className={`w-full flex flex-col justify-center items-center relative`}
+      >
+        <div
+          className={`grid w-full grid-cols-3 items-center
+          ${isCompact ? "mt-1.5 mb-1.5" : "mt-5 mb-3"}`}
+        >
           <div /> {/* left spacer */}
           <h2
             className="justify-self-center text-sm font-medium text-muted-foreground tracking-wide
@@ -234,7 +241,9 @@ function Projects({
                     {project.title}
                   </h3>
 
-                  <p className="text-sm text-muted-foreground mb-2 whitespace-pre-wrap">
+                  <p
+                    className={`text-sm text-muted-foreground mb-2 whitespace-pre-wrap ${isCompact ? "compact" : ""}`}
+                  >
                     {project.description}
                   </p>
                   <div className="mt-auto relative items-center gap-3 text-xs">

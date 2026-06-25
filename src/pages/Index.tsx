@@ -18,19 +18,23 @@ const Index = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
+    const checkScreenSize = () => {
       setIsMobile(
         window.matchMedia("(pointer: coarse)").matches ||
           window.matchMedia("(max-width: 960px)").matches,
       );
+
+      // MacBook Air-ish screens and other small laptops
+      setIsCompact(window.innerHeight <= 900);
     };
 
-    checkMobile(); // initial check
-    window.addEventListener("resize", checkMobile);
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
 
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   return (
@@ -57,12 +61,15 @@ const Index = () => {
             ${imagesLoaded ? "opacity-100 " : "opacity-0 pointer-events-none"}
             ${isMobile ? "p-4" : ""}`}
       >
-        <div className={`w-full ${isMobile ? "" : "max-w-[75dvw]"}`}>
+        <div
+          className={`w-full ${isMobile ? "" : isCompact ? "max-w-[85dvw]" : "max-w-[75dvw]"}`}
+        >
           {/* About Section */}
-          <About isMobile={isMobile} />
+          <About isMobile={isMobile} isCompact={isCompact} />
 
           {/* Projects, below the grid */}
           <Projects
+            isCompact={isCompact}
             imagesLoaded={imagesLoaded}
             setShowLoader={setShowLoader}
             setImagesLoaded={setImagesLoaded}
@@ -70,7 +77,7 @@ const Index = () => {
           />
 
           {/* Reach out - below both columns */}
-          <Socials isMobile={isMobile} />
+          <Socials isMobile={isMobile} isCompact={isCompact} />
         </div>
       </div>
     </div>
