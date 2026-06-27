@@ -56,21 +56,21 @@ function Projects({
     return sorted;
   }, []);
 
+  const GAP = 1;
+  const CARD_WIDTH = (100 - GAP * 2) / 3;
+  const STEP = CARD_WIDTH + GAP;
+
   const pageInfo = useMemo(() => {
     const info: { translate: number }[] = [];
-    let cumulativeAdvance = 0;
-    let idx = 0;
-    while (idx < allProjects.length) {
-      info.push({ translate: (cumulativeAdvance / 3) * 100 });
-      const count = Math.min(3, allProjects.length - idx);
-      const remaining = allProjects.length - (idx + count);
-      if (remaining > 0) {
-        cumulativeAdvance += Math.min(3, remaining);
-      }
-      idx += count;
+
+    for (let page = 0; page < allProjects.length - 2; page++) {
+      info.push({
+        translate: page * STEP,
+      });
     }
+
     return info;
-  }, [allProjects]);
+  }, [allProjects, STEP]);
 
   const translatePercent = pageInfo[page]?.translate ?? 0;
 
@@ -190,7 +190,7 @@ function Projects({
               // Width is 32.333% to account for 3 cards and 2% total gap between them
               <div
                 key={project.title}
-                className="w-full sm:w-[32.56%] flex-shrink-0"
+                className="w-full sm:w-[calc((100%-2%)/3)] flex-shrink-0"
               >
                 <div
                   className="flex flex-col rounded-xl w-full bg-background/50 aspect-video

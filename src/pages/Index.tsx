@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   AmbientAudioToggle,
   Ded,
