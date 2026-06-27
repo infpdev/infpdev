@@ -25,34 +25,54 @@ export function DownloadCounter({ repo }: DownloadCounterProps) {
   useEffect(() => {
     const controller = new AbortController();
 
+    const loadFromShields = async () => {
+      const response = await fetch(
+        `https://img.shields.io/github/downloads/infpdev/${repo}/total.json`,
+        { signal: controller.signal },
+      );
+
+      if (!response.ok) {
+        throw new Error("Shields request failed");
+      }
+
+      const data = await response.json();
+
+      return Number(data.value);
+    };
+
+    const loadFromGithub = async () => {
+      const response = await fetch(
+        `https://api.github.com/repos/infpdev/${repo}/releases`,
+        {
+          signal: controller.signal,
+          headers: {
+            Accept: "application/vnd.github+json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("GitHub request failed");
+      }
+
+      const releases = (await response.json()) as GithubRelease[];
+
+      return releases.reduce(
+        (releaseTotal, release) =>
+          releaseTotal +
+          (release.assets ?? []).reduce(
+            (assetTotal, asset) => assetTotal + (asset.download_count ?? 0),
+            0,
+          ),
+        0,
+      );
+    };
+
     const loadDownloads = async () => {
       try {
-        const response = await fetch(
-          `https://api.github.com/repos/infpdev/${repo}/releases`,
-          {
-            signal: controller.signal,
-            headers: {
-              Accept: "application/vnd.github+json",
-            },
-          },
-        );
+        const count = await Promise.any([loadFromShields(), loadFromGithub()]);
 
-        if (!response.ok) {
-          throw new Error(`GitHub releases request failed: ${response.status}`);
-        }
-
-        const releases = (await response.json()) as GithubRelease[];
-
-        const totalDownloads = releases.reduce((releaseTotal, release) => {
-          const assetTotal = (release.assets ?? []).reduce(
-            (assetSum, asset) => assetSum + (asset.download_count ?? 0),
-            0,
-          );
-
-          return releaseTotal + assetTotal;
-        }, 0);
-
-        setDownloadCount(totalDownloads);
+        setDownloadCount(count);
       } catch {
         if (!controller.signal.aborted) {
           setDownloadCount(null);
@@ -61,7 +81,6 @@ export function DownloadCounter({ repo }: DownloadCounterProps) {
     };
 
     loadDownloads();
-
     return () => controller.abort();
   }, [repo]);
 
