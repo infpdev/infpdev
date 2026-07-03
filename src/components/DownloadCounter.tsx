@@ -36,6 +36,9 @@ export function DownloadCounter({ repo }: DownloadCounterProps) {
       }
 
       const data = await response.json();
+      if (typeof data.value !== "number") {
+        throw new Error("Value exceeded 1k. Use GitHub API instead.");
+      }
 
       return Number(data.value);
     };
