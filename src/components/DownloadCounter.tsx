@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/tooltip";
 
 type DownloadCounterProps = {
-  repo: string;
+  repo: string | null;
+  handleCounterLoad: () => void;
 };
 
 type GithubReleaseAsset = {
@@ -19,13 +20,21 @@ type GithubRelease = {
   assets?: GithubReleaseAsset[];
 };
 
-export function DownloadCounter({ repo }: DownloadCounterProps) {
+export function DownloadCounter({
+  repo,
+  handleCounterLoad,
+}: DownloadCounterProps) {
   const [downloadCount, setDownloadCount] = useState<number | null>(null);
 
   useEffect(() => {
+    if (!repo) {
+      handleCounterLoad();
+      return;
+    }
+
     const controller = new AbortController();
 
-    const loadFromShields = async () => {
+    const loadFromShields = async (force = false) => {
       const response = await fetch(
         `https://img.shields.io/github/downloads/infpdev/${repo}/total.json`,
         { signal: controller.signal },
@@ -37,6 +46,7 @@ export function DownloadCounter({ repo }: DownloadCounterProps) {
 
       const data = await response.json();
       if (typeof data.value !== "number") {
+        if (force) return data.value;
         throw new Error("Value exceeded 1k. Use GitHub API instead.");
       }
 
@@ -73,19 +83,25 @@ export function DownloadCounter({ repo }: DownloadCounterProps) {
 
     const loadDownloads = async () => {
       try {
-        const count = await Promise.any([loadFromShields(), loadFromGithub()]);
-
+        const count = await loadFromShields();
         setDownloadCount(count);
       } catch {
-        if (!controller.signal.aborted) {
-          setDownloadCount(null);
+        try {
+          const count = await loadFromGithub();
+          setDownloadCount(count);
+        } catch {
+          // GitHub failed too
+          const count = await loadFromShields(true);
+          setDownloadCount(count);
         }
+      } finally {
+        handleCounterLoad();
       }
     };
 
     loadDownloads();
     return () => controller.abort();
-  }, [repo]);
+  }, [repo, handleCounterLoad]);
 
   return downloadCount === null ? null : (
     <Tooltip>

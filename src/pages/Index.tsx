@@ -16,8 +16,20 @@ const isDevDead = false;
 const Index = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
+
+  const [backgroundReady, setBackgroundReady] = useState(false);
+  const [projectsLoaded, setProjectsLoaded] = useState(false);
+  const [showPage, setShowPage] = useState(false);
+
+  useEffect(() => {
+    if (projectsLoaded && backgroundReady) {
+      setTimeout(() => {
+        setShowLoader(false);
+        setShowPage(true);
+      }, 1000);
+    }
+  }, [projectsLoaded, backgroundReady]);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -42,11 +54,16 @@ const Index = () => {
     >
       {isDevDead && <Ded />}
 
-      {imagesLoaded && <AmbientAudioToggle isMobile={isMobile} />}
+      {showPage && <AmbientAudioToggle isMobile={isMobile} />}
       <Redirect />
 
       {/* fixed background image */}
-      <Background isMobile={isMobile} imagesLoaded={imagesLoaded} />
+      <Background
+        isMobile={isMobile}
+        showPage={showPage}
+        backgroundReady={backgroundReady}
+        setBackgroundReady={setBackgroundReady}
+      />
 
       {/* Stars */}
       <Stars isMobile={isMobile} />
@@ -57,7 +74,7 @@ const Index = () => {
       {/* Main content container */}
       <div
         className={`flex-1 flex flex-col max-h-full items-center justify-center relative z-40 transition-opacity duration-1000
-            ${imagesLoaded ? "opacity-100 " : "opacity-0 pointer-events-none"}
+            ${showPage ? "opacity-100 " : "opacity-0 pointer-events-none"}
             ${isMobile ? "p-4" : ""}`}
       >
         <div
@@ -69,9 +86,9 @@ const Index = () => {
           {/* Projects, below the grid */}
           <Projects
             isCompact={isCompact}
-            imagesLoaded={imagesLoaded}
             setShowLoader={setShowLoader}
-            setImagesLoaded={setImagesLoaded}
+            showPage={showPage}
+            setProjectsLoaded={setProjectsLoaded}
             isMobile={isMobile}
           />
 

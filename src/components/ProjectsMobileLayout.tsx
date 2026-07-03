@@ -4,15 +4,17 @@ import { DownloadCounter } from "@/components/DownloadCounter";
 
 function ProjectsMobileLayout({
   randomProjects,
-  imagesLoaded,
+  showPage,
+  handleCounterLoad,
 }: {
   randomProjects: Project[];
-  imagesLoaded: boolean;
+  showPage: boolean;
+  handleCounterLoad: () => void;
 }) {
   return (
     <div
       style={
-        !imagesLoaded
+        !showPage
           ? {
               position: "fixed",
               inset: 0,
@@ -88,6 +90,7 @@ function ProjectsMobileLayout({
                   <div className="absolute right-0 -top-1">
                     <DownloadCounter
                       repo={project.githubRepoNameForDownloadCounter}
+                      handleCounterLoad={handleCounterLoad}
                     />
                   </div>
                 )}

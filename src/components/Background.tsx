@@ -9,7 +9,7 @@ import bg7 from "@/assets/7.png";
 import bg8 from "@/assets/8.png";
 import bg9 from "@/assets/9.png";
 import bg10 from "@/assets/10.png";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 // Array of all background images - add new imports here
 const backgroundImages = [bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9, bg10];
@@ -22,38 +22,32 @@ const getRandomBackground = () => {
 
 function Background({
   isMobile,
-  imagesLoaded,
+  showPage,
+  backgroundReady,
+  setBackgroundReady,
 }: {
   isMobile: boolean;
-  imagesLoaded: boolean;
+  showPage: boolean;
+  backgroundReady: boolean;
+  setBackgroundReady: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const backgroundImage = useMemo(() => getRandomBackground(), []);
-
-  const [backgroundReady, setBackgroundReady] = useState(false);
 
   useEffect(() => {
     const img = new Image();
 
     img.onload = () => {
-      setTimeout(() => {
-        setBackgroundReady(true);
-      }, 250);
+      setBackgroundReady(true);
     };
 
     img.src = backgroundImage;
-  }, [backgroundImage]);
+  }, [backgroundImage, setBackgroundReady]);
 
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center pointer-events-none
     transition-opacity duration-1000 p-6 md:p-8
-    ${
-      backgroundReady
-        ? imagesLoaded
-          ? "opacity-30"
-          : "opacity-50"
-        : "opacity-0"
-    }
+    ${backgroundReady ? (showPage ? "opacity-30" : "opacity-50") : "opacity-0"}
   `}
     >
       <div

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { DownloadCounter } from "@/components/DownloadCounter";
 import { projects } from "@/assets/projects.ts";
 import {
@@ -11,9 +11,9 @@ import ProjectsMobileLayout from "./ProjectsMobileLayout";
 
 interface ProjectProps {
   isCompact: boolean;
-  imagesLoaded: boolean;
   setShowLoader: (show: boolean) => void;
-  setImagesLoaded: (loaded: boolean) => void;
+  showPage: boolean;
+  setProjectsLoaded: (ready: boolean) => void;
   isMobile: boolean;
 }
 
@@ -42,13 +42,16 @@ const STATIC_PROJECT: Project = {
 
 function Projects({
   setShowLoader,
-  setImagesLoaded,
-  isMobile,
-  imagesLoaded,
   isCompact,
+  showPage,
+  setProjectsLoaded,
+  isMobile,
 }: ProjectProps) {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
   const [page, setPage] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [allCountersLoaded, setAllCountersLoaded] = useState(false);
+  const [countersLoaded, setCountersLoaded] = useState(0);
 
   const allProjects = useMemo(() => {
     const sorted = [...projects].sort(() => Math.random() - 0.5);
@@ -76,7 +79,6 @@ function Projects({
 
   // Preload project images
   useEffect(() => {
-    let showLoaderTimeout: number;
     const loadImageTimeout = setTimeout(() => {
       setShowLoader(true);
 
@@ -101,10 +103,7 @@ function Projects({
       const handleImageLoad = () => {
         loadedCount++;
         if (loadedCount === imageUrls.length) {
-          showLoaderTimeout = setTimeout(() => {
-            setImagesLoaded(true);
-            setShowLoader(false);
-          }, 1000);
+          setImagesLoaded(true);
         }
       };
 
@@ -118,15 +117,33 @@ function Projects({
 
     return () => {
       clearTimeout(loadImageTimeout);
-      clearTimeout(showLoaderTimeout);
     };
   }, [allProjects, setImagesLoaded, setShowLoader]);
+
+  const handleCounterLoad = useCallback(() => {
+    setCountersLoaded((prev) => {
+      const next = prev + 1;
+
+      if (next === allProjects.length) {
+        setAllCountersLoaded(true);
+      }
+
+      return next;
+    });
+  }, [allProjects.length]);
+
+  useEffect(() => {
+    if (imagesLoaded && allCountersLoaded) {
+      setProjectsLoaded(true);
+    }
+  }, [imagesLoaded, allCountersLoaded, setProjectsLoaded]);
 
   if (isMobile)
     return (
       <ProjectsMobileLayout
         randomProjects={allProjects.slice(0, 3)}
-        imagesLoaded={imagesLoaded}
+        showPage={showPage}
+        handleCounterLoad={handleCounterLoad}
       />
     );
 
@@ -255,13 +272,13 @@ function Projects({
                     >
                       view on github →
                     </a>
-                    {project.githubRepoNameForDownloadCounter && (
-                      <div className="absolute right-0 -top-1">
-                        <DownloadCounter
-                          repo={project.githubRepoNameForDownloadCounter}
-                        />
-                      </div>
-                    )}
+
+                    <div className="absolute right-0 -top-1">
+                      <DownloadCounter
+                        repo={project.githubRepoNameForDownloadCounter ?? null}
+                        handleCounterLoad={handleCounterLoad}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
