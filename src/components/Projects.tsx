@@ -33,7 +33,7 @@ export interface Project {
 const STATIC_PROJECT: Project = {
   title: "vaultOps",
   description:
-    "a small toolkit for gtao heists \nfixes the PgUp bug and solves fingerprint puzzles.",
+    "an advanced toolkit for gtao heists - nosave, fingerprint solvers, ledge-grab, PgUp fix, etc",
   github: "https://github.com/infpdev/gtao-heist-toolkit",
   hasVideo: true,
   videoId: "j44mYY3tC10",
