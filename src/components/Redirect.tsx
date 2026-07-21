@@ -44,6 +44,14 @@ const REDIRECT_CONFIGS: RedirectConfig[] = [
     yesRedirect:
       "https://github.com/infpdev/gtao-heist-toolkit/blob/main/lib/standalone%20scripts/HOW-TO-UPDATE-STANDALONE.md",
   },
+  {
+    param: "vaultOps",
+    value: "4",
+    type: "text-redirect",
+    title: "vaultOps",
+    message: "Redirecting to vaultsOps → post-patch NoSave tutorial",
+    yesRedirect: "https://youtu.be/6ZYJPmXAMu4",
+  },
 ];
 
 const redirectWithReferrer = (url: string) => {
