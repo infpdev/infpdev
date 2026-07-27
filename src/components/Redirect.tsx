@@ -52,6 +52,15 @@ const REDIRECT_CONFIGS: RedirectConfig[] = [
     message: "Redirecting to vaultsOps → post-patch NoSave tutorial",
     yesRedirect: "https://youtu.be/6ZYJPmXAMu4",
   },
+  {
+    param: "vaultOps",
+    value: "5",
+    type: "text-redirect",
+    title: "vaultOps",
+    message: "Redirecting to vaultsOps → Discord Rich Presence tutorial",
+    yesRedirect:
+      "https://github.com/infpdev/gtao-heist-toolkit/releases/tag/v4.69.69",
+  },
 ];
 
 const redirectWithReferrer = (url: string) => {
