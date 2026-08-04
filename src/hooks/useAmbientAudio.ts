@@ -20,7 +20,7 @@ import t3Track1 from "@/assets/audio/T3 pami - highway.mp3";
 import t3Track2 from "@/assets/audio/T3 JUNE - NOTHING WITHOUT YOU.mp3";
 import t3Track3 from "@/assets/audio/T3 Last Page - Su Han.mp3";
 import t3Track4 from "@/assets/audio/T3 Lips - The Wildlife.mp3";
-import t3Track5 from "@/assets/audio/T3 Sweet Nobody - The Lasting Kind - i'm cyborg but that's ok.mp3";
+import t3Track5 from "@/assets/audio/T3 Sweet Nobody - The Lasting Kind.mp3";
 
 // Define track objects with both src and display name
 export interface Track {
