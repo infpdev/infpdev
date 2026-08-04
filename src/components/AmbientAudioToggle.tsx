@@ -1,3 +1,5 @@
+// In AmbientAudioToggle.tsx
+
 import { Volume2, VolumeX } from "lucide-react";
 import { useAmbientAudio } from "@/hooks/useAmbientAudio";
 import { useState, useEffect, useRef } from "react";
@@ -9,9 +11,62 @@ export default function AmbientAudioToggle({
 }: {
   isMobile: boolean;
 }) {
-  const { isPlaying, toggle } = useAmbientAudio();
+  const { isPlaying, toggle, currentTrack } = useAmbientAudio();
   const [showHint, setShowHint] = useState(false);
   const isPlayingRef = useRef(isPlaying);
+
+  // Helper to get formatted track display
+  const getTrackDisplay = (track: typeof currentTrack) => {
+    if (!track) return null;
+    return track.artist ? `${track.name} by ${track.artist}` : track.name;
+  };
+
+  // Get display name for the button
+  const getButtonLabel = () => {
+    if (currentTrack) {
+      const trackDisplay = getTrackDisplay(currentTrack);
+      if (isPlaying) {
+        return `Pause "${trackDisplay}"`;
+      } else {
+        return `Resume "${trackDisplay}"`;
+      }
+    }
+    return isPlaying ? "Pause ambient audio" : "Play ambient audio";
+  };
+
+  // Get aria-label
+  const getAriaLabel = () => {
+    if (currentTrack) {
+      const trackDisplay = getTrackDisplay(currentTrack);
+      if (isPlaying) {
+        return `Pause ${trackDisplay}`;
+      } else {
+        return `Resume ${trackDisplay}`;
+      }
+    }
+    return isPlaying ? "Mute ambient audio" : "Play ambient audio";
+  };
+
+  // Get tooltip content
+  const getTooltipContent = () => {
+    if (currentTrack) {
+      const trackDisplay = getTrackDisplay(currentTrack);
+      if (isPlaying) {
+        return `Pause "${trackDisplay}"`;
+      } else {
+        return `Resume "${trackDisplay}"`;
+      }
+    }
+    return isPlaying ? "Pause ambient audio" : "Play ambient audio";
+  };
+
+  // Get hint text
+  const getHintText = () => {
+    if (isPlaying && currentTrack) {
+      return getTrackDisplay(currentTrack);
+    }
+    return "my favs";
+  };
 
   useEffect(() => {
     isPlayingRef.current = isPlaying;
@@ -50,8 +105,8 @@ export default function AmbientAudioToggle({
             toggle();
           }}
           className="p-2 rounded-full bg-secondary/50 backdrop-blur-sm border border-border/50 text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-all duration-200"
-          aria-label={isPlaying ? "Mute ambient audio" : "Play ambient audio"}
-          title={isPlaying ? "Mute" : "Play ambient music"}
+          aria-label={getAriaLabel()}
+          title={getButtonLabel()}
         >
           {isPlaying ? (
             <Volume2 className="w-4 h-4" />
@@ -60,7 +115,8 @@ export default function AmbientAudioToggle({
           )}
         </button>
       )}
-      {/* Hint text */}
+
+      {/* Hint text - updated to show track info when playing */}
       <div
         className={`pointer-events-none flex items-center transition-opacity duration-500 ${
           showHint ? "opacity-100" : "opacity-0"
@@ -78,7 +134,9 @@ export default function AmbientAudioToggle({
             →
           </span>
         )}
-        <span>ambient music</span>
+        <span>
+          <span>{getHintText()}</span>
+        </span>
         {!isMobile && (
           <span
             className={`${
@@ -99,9 +157,7 @@ export default function AmbientAudioToggle({
                 toggle();
               }}
               className="p-2 rounded-full bg-secondary/50 backdrop-blur-sm border border-border/50 text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-all duration-200"
-              aria-label={
-                isPlaying ? "Mute ambient audio" : "Play ambient audio"
-              }
+              aria-label={getAriaLabel()}
             >
               {isPlaying ? (
                 <Volume2 className="w-4 h-4" />
@@ -111,7 +167,7 @@ export default function AmbientAudioToggle({
             </button>
           </TooltipTrigger>
           <TooltipContent className="text-xs" side="left" sideOffset={5}>
-            {isPlaying ? "Mute ambient audio" : "Play ambient audio"}
+            {getTooltipContent()}
           </TooltipContent>
         </Tooltip>
       )}
