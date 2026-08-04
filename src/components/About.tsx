@@ -20,7 +20,7 @@ const About = ({
       </section>
 
       {/* Main content grid - responsive, both columns in same container */}
-      <div className="grid grid-cols-1 lg:grid-cols-[41%_3%_56%]">
+      <div className="grid grid-cols-1 gap-5 lg:gap-0 lg:grid-cols-[41%_3%_56%]">
         {/* Left column */}
         <div className="space-y-10 flex flex-col lg:col-start-1">
           {/* About me - brief */}
