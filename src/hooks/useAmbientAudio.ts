@@ -10,10 +10,9 @@ import t1Track5 from "@/assets/audio/T1 The Ivy - It Was Always You.mp3";
 // Tier 2 tracks - loaded only when needed
 import t2Track1 from "@/assets/audio/T2 ALWAYS - minj.mp3";
 import t2Track2 from "@/assets/audio/T2 Angel Youth - The Vansire Band.mp3";
-import t2Track3 from "@/assets/audio/T2 clouds in my room - kanegi.mp3";
-import t2Track4 from "@/assets/audio/T2 Flowers in June - Celine Wanyi.mp3";
-import t2Track5 from "@/assets/audio/T2 Here You Are - We Are Various.mp3";
-import t2Track6 from "@/assets/audio/T2 Nothing But Thieves - Sorry.mp3";
+import t2Track3 from "@/assets/audio/T2 Flowers in June - Celine Wanyi.mp3";
+import t2Track4 from "@/assets/audio/T2 Here You Are - We Are Various.mp3";
+import t2Track5 from "@/assets/audio/T2 Nothing But Thieves - Sorry.mp3";
 
 // Tier 3 tracks - loaded only when needed
 import t3Track1 from "@/assets/audio/T3 pami - highway.mp3";
@@ -40,10 +39,9 @@ const TIER_1_TRACKS: Track[] = [
 const TIER_2_TRACKS: Track[] = [
   { src: t2Track1, name: "Always", artist: "minj" },
   { src: t2Track2, name: "Angel Youth", artist: "The Vansire Band" },
-  { src: t2Track3, name: "clouds in my room", artist: "kanegi" },
-  { src: t2Track4, name: "Flowers in June", artist: "Celine Wanyi" },
-  { src: t2Track5, name: "Here You Are", artist: "We Are Various" },
-  { src: t2Track6, name: "Sorry", artist: "Nothing But Thieves" },
+  { src: t2Track3, name: "Flowers in June", artist: "Celine Wanyi" },
+  { src: t2Track4, name: "Here You Are", artist: "We Are Various" },
+  { src: t2Track5, name: "Sorry", artist: "Nothing But Thieves" },
 ];
 
 const TIER_3_TRACKS: Track[] = [
@@ -58,7 +56,7 @@ const TIER_3_TRACKS: Track[] = [
   },
 ];
 
-const TARGET_VOLUME = 0.3;
+const TARGET_VOLUME = 0.2;
 const FADE_DURATION = 800;
 const PRELOAD_THRESHOLD = 10; // seconds before end to queue next track
 
