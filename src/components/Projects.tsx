@@ -263,17 +263,17 @@ function Projects({
                   >
                     {project.description}
                   </p>
-                  <div className="mt-auto relative items-center gap-3 text-xs">
+                  <div className="mt-auto relative items-center gap-3 leading-none">
                     <a
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-auto text-xs text-primary/80 transition-colors w-fit duration-200 hover:text-primary select-auto"
+                      className="mt-auto text-xs !text-[14px] text-primary/80 transition-colors w-fit duration-200 hover:text-primary select-auto"
                     >
                       view on github →
                     </a>
 
-                    <div className="absolute right-0 -top-1">
+                    <div className="absolute right-0 -top-1.5">
                       <DownloadCounter
                         repo={project.githubRepoNameForDownloadCounter ?? null}
                         handleCounterLoad={handleCounterLoad}

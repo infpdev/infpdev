@@ -106,7 +106,7 @@ export function DownloadCounter({
   return downloadCount === null ? null : (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="ml-auto flex items-center gap-1.5 px-2 hover:bg-accent/10 transition-colors rounded-md p-1 text-[11px] text-muted-foreground cursor-small select-none">
+        <div className="ml-auto flex items-center gap-1.5 px-2 hover:bg-accent/10 transition-colors rounded-md py-1.5 text-[12px] text-muted-foreground cursor-small select-none">
           <Download className="h-3.5 w-3.5" />
           <span>{downloadCount.toLocaleString()}</span>
         </div>

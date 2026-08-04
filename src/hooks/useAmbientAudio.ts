@@ -30,7 +30,7 @@ export interface Track {
 }
 
 const TIER_1_TRACKS: Track[] = [
-  { src: t1Track1, name: "Ordinary Child", artist: "Church Bells" },
+  { src: t1Track1, name: "Church Bells", artist: "Ordinary Child" },
   { src: t1Track2, name: "Painting", artist: "Sonia Gadhia" },
   { src: t1Track3, name: "Gone", artist: "ROSE" },
   { src: t1Track4, name: "sweet", artist: "Delorians" },
@@ -38,7 +38,7 @@ const TIER_1_TRACKS: Track[] = [
 ];
 
 const TIER_2_TRACKS: Track[] = [
-  { src: t2Track1, name: "ALWAYS", artist: "minj" },
+  { src: t2Track1, name: "Always", artist: "minj" },
   { src: t2Track2, name: "Angel Youth", artist: "The Vansire Band" },
   { src: t2Track3, name: "clouds in my room", artist: "kanegi" },
   { src: t2Track4, name: "Flowers in June", artist: "Celine Wanyi" },
@@ -48,12 +48,12 @@ const TIER_2_TRACKS: Track[] = [
 
 const TIER_3_TRACKS: Track[] = [
   { src: t3Track1, name: "highway", artist: "pami" },
-  { src: t3Track2, name: "NOTHING WITHOUT YOU", artist: "JUNE" },
+  { src: t3Track2, name: "Nothing without you", artist: "june" },
   { src: t3Track3, name: "Last Page", artist: "Su Han" },
   { src: t3Track4, name: "Lips", artist: "The Wildlife" },
   {
     src: t3Track5,
-    name: "The Lasting Kind - i'm cyborg but that's ok",
+    name: "The Lasting Kind",
     artist: "Sweet Nobody",
   },
 ];
