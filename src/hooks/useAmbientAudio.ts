@@ -262,6 +262,108 @@ export const useAmbientAudio = () => {
     }
   }, [isPlaying, fadeIn, handleTimeUpdate]);
 
+  // Skip to next track (as if the current track ended)
+  const skipToNext = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+
+    // Get current tier by checking which array contains the track
+    let currentTier = 0;
+    if (TIER_1_TRACKS.some((t) => t.src === currentTrack.src)) currentTier = 1;
+    else if (TIER_2_TRACKS.some((t) => t.src === currentTrack.src))
+      currentTier = 2;
+    else if (TIER_3_TRACKS.some((t) => t.src === currentTrack.src))
+      currentTier = 3;
+
+    if (currentTier === 0) return;
+
+    const nextTier = currentTier + 1;
+
+    // Determine which tier to play next
+    let targetTier = nextTier;
+    if (nextTier > 3) {
+      targetTier = 1;
+    }
+
+    const nextTierTracks = getTierTracks(targetTier);
+    if (!nextTierTracks) return;
+
+    // Reset tier if all songs have been played
+    resetTierIfNeeded(targetTier);
+
+    // Get a random track that hasn't been played in this tier
+    const playedSet = playedTracksRef.current[targetTier as 1 | 2 | 3];
+    const nextTrack = getRandomTrack(nextTierTracks, playedSet);
+
+    // Mark this track as played
+    playedSet.add(nextTrack);
+
+    // Set as next track
+    nextTrackRef.current = nextTrack;
+    currentTierRef.current = targetTier;
+
+    // Preload the next track
+    preloadNextTrack(nextTrack);
+
+    // Trigger the end handler
+    handleTrackEnd();
+  }, [currentTrack, resetTierIfNeeded, preloadNextTrack, handleTrackEnd]);
+
+  // Swap to a different track in the same tier
+  const swapTrack = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+
+    // Get current tier by checking which array contains the track
+    let currentTier = 0;
+    if (TIER_1_TRACKS.some((t) => t.src === currentTrack.src)) currentTier = 1;
+    else if (TIER_2_TRACKS.some((t) => t.src === currentTrack.src))
+      currentTier = 2;
+    else if (TIER_3_TRACKS.some((t) => t.src === currentTrack.src))
+      currentTier = 3;
+
+    if (currentTier === 0) return;
+
+    const tierTracks = getTierTracks(currentTier);
+    if (!tierTracks) return;
+
+    // Get tracks that haven't been played in this tier
+    const playedSet = playedTracksRef.current[currentTier as 1 | 2 | 3];
+    const availableTracks = tierTracks.filter(
+      (track) => !playedSet.has(track) && track.src !== currentTrack.src,
+    );
+
+    // If no available tracks, reset the tier and try again
+    let newTrack: Track | null = null;
+    if (availableTracks.length === 0) {
+      // Reset the tier
+      playedSet.clear();
+      // Get all tracks except current
+      const allExceptCurrent = tierTracks.filter(
+        (track) => track.src !== currentTrack.src,
+      );
+      if (allExceptCurrent.length > 0) {
+        newTrack =
+          allExceptCurrent[Math.floor(Math.random() * allExceptCurrent.length)];
+      }
+    } else {
+      newTrack =
+        availableTracks[Math.floor(Math.random() * availableTracks.length)];
+    }
+
+    if (!newTrack) return;
+
+    // Mark as played
+    playedSet.add(newTrack);
+
+    // Store as next track and trigger the end handler
+    nextTrackRef.current = newTrack;
+    preloadNextTrack(newTrack);
+
+    // End current track to trigger transition
+    handleTrackEnd();
+  }, [currentTrack, handleTrackEnd, preloadNextTrack]);
+
   const toggle = useCallback(() => {
     if (!hasInteracted) {
       // First interaction: create audio and start playing
@@ -372,5 +474,8 @@ export const useAmbientAudio = () => {
     isPlaying,
     toggle,
     currentTrack,
+    skipToNext,
+    swapTrack,
+    hasInteracted,
   };
 };
