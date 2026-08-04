@@ -1,4 +1,11 @@
-import { Volume2, VolumeX, SkipForward, Shuffle } from "lucide-react";
+import {
+  Volume2,
+  VolumeX,
+  SkipForward,
+  Shuffle,
+  Pause,
+  Play,
+} from "lucide-react";
 import { useAmbientAudio } from "@/hooks/useAmbientAudio";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -137,7 +144,6 @@ export default function AmbientAudioToggle({
     }
   }, [isMobile, handleClickOutside]);
 
-  // Handle hover for desktop
   const handleMouseEnter = () => {
     if (!isMobile && hasInteracted) {
       if (hideMenuTimerRef.current) {
@@ -152,23 +158,8 @@ export default function AmbientAudioToggle({
     if (!isMobile) {
       hideMenuTimerRef.current = setTimeout(() => {
         setShowMenu(false);
-        // setMenuOffset(0);
-      }, 1000);
+      }, 300);
     }
-  };
-
-  const handleMenuMouseEnter = () => {
-    if (hideMenuTimerRef.current) {
-      clearTimeout(hideMenuTimerRef.current);
-      hideMenuTimerRef.current = null;
-    }
-  };
-
-  const handleMenuMouseLeave = () => {
-    hideMenuTimerRef.current = setTimeout(() => {
-      setShowMenu(false);
-      // setMenuOffset(0);
-    }, 300);
   };
 
   // Handle long press for mobile
@@ -243,6 +234,10 @@ export default function AmbientAudioToggle({
 
   const shouldShowPlayTooltip = !hasInteracted;
 
+  useEffect(() => {
+    if (shouldShowPlayTooltip) setShowMenu(true);
+  }, [shouldShowPlayTooltip]);
+
   return (
     <div
       ref={containerRef}
@@ -285,46 +280,67 @@ export default function AmbientAudioToggle({
           {isMobile && showMenu && hasInteracted && (
             <div
               ref={menuRef}
-              className={`absolute right-full mr-2 top-1/2 bg-secondary/90 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg overflow-hidden min-w-[140px] max-h-[80vh] overflow-y-auto transition-transform duration-200`}
+              className={`absolute right-full mr-2 top-1/2 bg-secondary/50 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg overflow-hidden transition-transform duration-200`}
               style={{
-                transform: `translateY(calc(-50% + ${menuOffset + (isMobile ? 16 : 24)}px))`,
+                transform: `translateY(calc(-50% + ${menuOffset + 16}px))`,
               }}
             >
-              {/* Track info at top */}
+              {/* Buttons at top */}
+              <div className="flex items-center border-b border-primary/30 justify-around p-1.5 gap-0.5">
+                {/* Play/Pause button */}
+                <button
+                  onClick={() => {
+                    toggle();
+                    // setShowMenu(false);
+                  }}
+                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+                  aria-label={isPlaying ? "Pause" : "Play"}
+                >
+                  {isPlaying ? (
+                    <Pause className="w-4 h-4" />
+                  ) : (
+                    <Play className="w-4 h-4" />
+                  )}
+                </button>
+
+                {/* Swap button */}
+                <button
+                  onClick={() => {
+                    swapTrack();
+                    // setShowMenu(false);
+                  }}
+                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+                  aria-label="Swap track"
+                >
+                  <Shuffle className="w-4 h-4" />
+                </button>
+
+                {/* Next button */}
+                <button
+                  onClick={() => {
+                    skipToNext();
+                    // setShowMenu(false);
+                  }}
+                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+                  aria-label="Next track"
+                >
+                  <SkipForward className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Track info at bottom */}
               {currentTrack && (
-                <div className="px-3 py-2 border-b border-border/30">
-                  <div className="text-sm font-medium text-foreground">
+                <div className="px-3 py-1.5 text-center min-w-[120px]">
+                  <div className="text-sm font-medium text-foreground truncate max-w-[100px]">
                     {titleCase(currentTrack.name)}
                   </div>
                   {currentTrack.artist && (
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-muted-foreground truncate max-w-[100px]">
                       {titleCase(currentTrack.artist)}
                     </div>
                   )}
                 </div>
               )}
-              <button
-                onClick={() => {
-                  swapTrack();
-                  setShowMenu(false);
-                  // setMenuOffset(0);
-                }}
-                className="w-full p-3 text-xs text-foreground hover:bg-primary/10 flex items-center gap-2 transition-colors"
-              >
-                <Shuffle className="w-3.5 h-3.5" />
-                Swap
-              </button>
-              <button
-                onClick={() => {
-                  skipToNext();
-                  setShowMenu(false);
-                  // setMenuOffset(0);
-                }}
-                className="w-full p-3 text-xs text-foreground hover:bg-primary/10 flex items-center gap-2 transition-colors border-t border-border/30"
-              >
-                <SkipForward className="w-3.5 h-3.5" />
-                Next
-              </button>
             </div>
           )}
         </div>
@@ -413,48 +429,66 @@ export default function AmbientAudioToggle({
           {!isMobile && showMenu && hasInteracted && (
             <div
               ref={menuRef}
-              className={`absolute right-full mr-2 top-1/2 bg-secondary/90 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg overflow-hidden min-w-[140px] max-h-[80vh] overflow-y-auto transition-transform duration-200`}
+              className={`absolute right-full mr-2 top-1/2 backdrop-blur-[2px] bg-secondary/30 border border-border/50 rounded-lg shadow-lg overflow-hidden transition-transform duration-200`}
               style={{
-                transform: `translateY(calc(-50% + ${menuOffset + (isMobile ? 16 : 24)}px))`,
+                transform: `translateY(calc(-50% + ${menuOffset + 24}px))`,
               }}
-              onMouseEnter={handleMenuMouseEnter}
-              onMouseLeave={handleMenuMouseLeave}
             >
-              {/* Track info at top */}
+              {/* Buttons at top */}
+              <div className="flex items-center border-b border-primary/30 justify-around p-1.5 gap-0.5">
+                {/* Play/Pause button */}
+                <button
+                  onClick={() => {
+                    toggle();
+                    // setShowMenu(false);
+                  }}
+                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+                  aria-label={isPlaying ? "Pause" : "Play"}
+                >
+                  {isPlaying ? (
+                    <Pause className="w-4 h-4" />
+                  ) : (
+                    <Play className="w-4 h-4" />
+                  )}
+                </button>
+
+                {/* Swap button */}
+                <button
+                  onClick={() => {
+                    swapTrack();
+                    // setShowMenu(false);
+                  }}
+                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+                  aria-label="Swap track"
+                >
+                  <Shuffle className="w-4 h-4" />
+                </button>
+
+                {/* Next button */}
+                <button
+                  onClick={() => {
+                    skipToNext();
+                    // setShowMenu(false);
+                  }}
+                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+                  aria-label="Next track"
+                >
+                  <SkipForward className="w-4 h-4" />
+                </button>
+              </div>
+              {/* Track info at bottom */}
               {currentTrack && (
-                <div className="px-3 py-2 border-b border-border/30">
-                  <div className="text-sm font-medium text-foreground">
+                <div className="px-3 py-1.5 text-center min-w-[120px]">
+                  <div className="text-sm font-medium text-foreground truncate max-w-[100px]">
                     {titleCase(currentTrack.name)}
                   </div>
                   {currentTrack.artist && (
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-muted-foreground truncate max-w-[100px]">
                       {titleCase(currentTrack.artist)}
                     </div>
                   )}
                 </div>
               )}
-              <button
-                onClick={() => {
-                  swapTrack();
-                  // setShowMenu(false);
-                  // setMenuOffset(0);
-                }}
-                className="w-full p-3 text-xs text-foreground hover:bg-primary/10 flex items-center gap-2 transition-colors"
-              >
-                <Shuffle className="w-3.5 h-3.5" />
-                Swap
-              </button>
-              <button
-                onClick={() => {
-                  skipToNext();
-                  // setShowMenu(false);
-                  // setMenuOffset(0);
-                }}
-                className="w-full p-3 text-xs text-foreground hover:bg-primary/10 flex items-center gap-2 transition-colors border-t border-border/30"
-              >
-                <SkipForward className="w-3.5 h-3.5" />
-                Next
-              </button>
             </div>
           )}
         </div>
