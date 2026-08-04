@@ -5,6 +5,7 @@ import { useAmbientAudio } from "@/hooks/useAmbientAudio";
 import { useState, useEffect, useRef } from "react";
 import { TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Tooltip } from "./ui/tooltip";
+import { titleCase } from "title-case";
 
 export default function AmbientAudioToggle({
   isMobile,
@@ -18,7 +19,9 @@ export default function AmbientAudioToggle({
   // Helper to get formatted track display
   const getTrackDisplay = (track: typeof currentTrack) => {
     if (!track) return null;
-    return track.artist ? `${track.name} by ${track.artist}` : track.name;
+    return titleCase(
+      track.artist ? `${track.name} by ${track.artist}` : track.name,
+    );
   };
 
   // Get display name for the button

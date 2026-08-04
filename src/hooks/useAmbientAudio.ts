@@ -32,7 +32,7 @@ export interface Track {
 const TIER_1_TRACKS: Track[] = [
   { src: t1Track1, name: "Ordinary Child", artist: "Church Bells" },
   { src: t1Track2, name: "Painting", artist: "Sonia Gadhia" },
-  { src: t1Track3, name: "Gone MV", artist: "ROSE" },
+  { src: t1Track3, name: "Gone", artist: "ROSE" },
   { src: t1Track4, name: "sweet", artist: "Delorians" },
   { src: t1Track5, name: "It Was Always You", artist: "The Ivy" },
 ];
@@ -60,7 +60,7 @@ const TIER_3_TRACKS: Track[] = [
 
 const TARGET_VOLUME = 0.3;
 const FADE_DURATION = 800;
-const PRELOAD_THRESHOLD = 5; // seconds before end to queue next track
+const PRELOAD_THRESHOLD = 10; // seconds before end to queue next track
 
 // Helper to get random track excluding played ones
 const getRandomTrack = (tracks: Track[], playedTracks: Set<Track>): Track => {
@@ -85,16 +85,18 @@ const getTierTracks = (tier: number): Track[] | null => {
 
 export const useAmbientAudio = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const preloadRef = useRef<HTMLAudioElement | null>(null); // New: dedicated preload audio element
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null); // Changed from string to Track
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const currentTierRef = useRef(1);
-  const nextTrackRef = useRef<Track | null>(null); // Changed from string to Track
+  const nextTrackRef = useRef<Track | null>(null);
   const fadeIntervalRef = useRef<number | null>(null);
+  const isPreloadingRef = useRef(false);
 
   // Track played songs for each tier
   const playedTracksRef = useRef<{
-    1: Set<Track>; // Changed from Set<string> to Set<Track>
+    1: Set<Track>;
     2: Set<Track>;
     3: Set<Track>;
   }>({
@@ -102,6 +104,35 @@ export const useAmbientAudio = () => {
     2: new Set(),
     3: new Set(),
   });
+
+  // New: Preload the next track
+  const preloadNextTrack = useCallback((track: Track) => {
+    if (!preloadRef.current) {
+      preloadRef.current = new Audio();
+      preloadRef.current.preload = "auto";
+    }
+
+    // Only preload if not already preloading this track
+    if (preloadRef.current.src !== track.src && !isPreloadingRef.current) {
+      isPreloadingRef.current = true;
+
+      // Setting a new src automatically frees the previous one
+      preloadRef.current.src = track.src;
+      preloadRef.current.load();
+
+      // Reset the flag once loaded
+      preloadRef.current.oncanplaythrough = () => {
+        isPreloadingRef.current = false;
+        // console.log("Preloaded:", track.name);
+      };
+
+      // Also reset on error
+      preloadRef.current.onerror = () => {
+        isPreloadingRef.current = false;
+        console.error("Failed to preload:", track.name);
+      };
+    }
+  }, []);
 
   const fadeIn = useCallback((audio: HTMLAudioElement) => {
     audio.volume = 0;
@@ -167,9 +198,12 @@ export const useAmbientAudio = () => {
 
         nextTrackRef.current = nextTrack;
         currentTierRef.current = targetTier;
+
+        // Preload the next track immediately
+        preloadNextTrack(nextTrack);
       }
     }
-  }, [isPlaying, resetTierIfNeeded]);
+  }, [isPlaying, resetTierIfNeeded, preloadNextTrack]);
 
   const handleTrackEnd = useCallback(() => {
     const audio = audioRef.current;
@@ -177,22 +211,64 @@ export const useAmbientAudio = () => {
 
     if (nextTrackRef.current) {
       const newTrack = nextTrackRef.current;
-      audio.src = newTrack.src; // Use .src property
-      audio.load();
-      audio.play().catch(() => {
-        setIsPlaying(false);
-      });
-      fadeIn(audio);
-      setCurrentTrack(newTrack);
-      nextTrackRef.current = null;
+
+      // Check if preloaded audio is ready
+      if (preloadRef.current && preloadRef.current.src === newTrack.src) {
+        // Use the preloaded audio by transferring its buffer
+        // Create a new audio element with the preloaded content
+        const newAudio = new Audio(newTrack.src);
+        newAudio.preload = "auto";
+        newAudio.volume = 0;
+
+        // Copy event listeners from old audio
+        newAudio.addEventListener("timeupdate", handleTimeUpdate);
+        newAudio.addEventListener("ended", handleTrackEnd);
+
+        // Replace the audio element
+        const oldAudio = audioRef.current;
+        audioRef.current = newAudio;
+
+        // Remove old event listeners
+        if (oldAudio) {
+          oldAudio.pause();
+          oldAudio.removeEventListener("timeupdate", handleTimeUpdate);
+          oldAudio.removeEventListener("ended", handleTrackEnd);
+          oldAudio.src = "";
+        }
+
+        // Start playing the new audio
+        newAudio.play().catch(() => {
+          setIsPlaying(false);
+        });
+        fadeIn(newAudio);
+        setCurrentTrack(newTrack);
+        nextTrackRef.current = null;
+
+        // Reset preload element
+        if (preloadRef.current) {
+          preloadRef.current.src = "";
+          preloadRef.current.load();
+          isPreloadingRef.current = false;
+        }
+      } else {
+        // Fallback: load normally if preload failed
+        audio.src = newTrack.src;
+        audio.load();
+        audio.play().catch(() => {
+          setIsPlaying(false);
+        });
+        fadeIn(audio);
+        setCurrentTrack(newTrack);
+        nextTrackRef.current = null;
+      }
     }
-  }, [isPlaying, fadeIn]);
+  }, [isPlaying, fadeIn, handleTimeUpdate]);
 
   const toggle = useCallback(() => {
     if (!hasInteracted) {
       // First interaction: create audio and start playing
       const audio = new Audio();
-      audio.preload = "none";
+      audio.preload = "auto"; // Changed from "none" to "auto"
       audioRef.current = audio;
 
       // Get initial track from tier 1
@@ -202,7 +278,7 @@ export const useAmbientAudio = () => {
       );
       playedTracksRef.current[1].add(initialTrack);
 
-      audio.src = initialTrack.src; // Use .src property
+      audio.src = initialTrack.src;
       audio.load();
 
       setCurrentTrack(initialTrack);
@@ -217,6 +293,20 @@ export const useAmbientAudio = () => {
         .then(() => {
           fadeIn(audio);
           setHasInteracted(true);
+
+          // Preload the next track after a small delay
+          setTimeout(() => {
+            const nextTrack = getRandomTrack(
+              TIER_2_TRACKS,
+              playedTracksRef.current[2],
+            );
+            if (nextTrack) {
+              playedTracksRef.current[2].add(nextTrack);
+              nextTrackRef.current = nextTrack;
+              currentTierRef.current = 2;
+              preloadNextTrack(nextTrack);
+            }
+          }, 2000);
         })
         .catch((err) => {
           console.error(err);
@@ -234,13 +324,19 @@ export const useAmbientAudio = () => {
       setIsPlaying(false);
     } else {
       setIsPlaying(true);
-
       audio.play().catch((err) => {
         console.error(err);
         setIsPlaying(false);
       });
     }
-  }, [hasInteracted, isPlaying, fadeIn, handleTimeUpdate, handleTrackEnd]);
+  }, [
+    hasInteracted,
+    isPlaying,
+    fadeIn,
+    handleTimeUpdate,
+    handleTrackEnd,
+    preloadNextTrack,
+  ]);
 
   // Update event listeners when callbacks change
   useEffect(() => {
@@ -265,6 +361,11 @@ export const useAmbientAudio = () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
+      }
+      if (preloadRef.current) {
+        preloadRef.current.pause();
+        preloadRef.current.src = "";
+        preloadRef.current = null;
       }
     };
   }, []);
