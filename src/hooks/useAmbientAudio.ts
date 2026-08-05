@@ -6,6 +6,7 @@ import t1Track2 from "@/assets/audio/T1 Painting - Sonia Gadhia.mp3";
 import t1Track3 from "@/assets/audio/T1 ROSE - Gone MV.mp3";
 import t1Track4 from "@/assets/audio/T1 sweet - Delorians.mp3";
 import t1Track5 from "@/assets/audio/T1 The Ivy - It Was Always You.mp3";
+import t1Track6 from "@/assets/audio/T1 Night Traveler - Late Night Radio.mp3";
 import monthlySalaryMeow from "@/assets/audio/Easter Toyoki.mp3";
 
 // Tier 2 tracks - loaded only when needed
@@ -14,6 +15,7 @@ import t2Track2 from "@/assets/audio/T2 Angel Youth - The Vansire Band.mp3";
 import t2Track3 from "@/assets/audio/T2 Flowers in June - Celine Wanyi.mp3";
 import t2Track4 from "@/assets/audio/T2 Here You Are - We Are Various.mp3";
 import t2Track5 from "@/assets/audio/T2 Nothing But Thieves - Sorry.mp3";
+import t2Track6 from "@/assets/audio/T2 Night Traveler - Blue Eyes.mp3";
 
 // Tier 3 tracks - loaded only when needed
 import t3Track1 from "@/assets/audio/T3 pami - highway.mp3";
@@ -40,6 +42,7 @@ const TIER_1_TRACKS: Track[] = [
   { src: t1Track3, name: "Gone", artist: "ROSE" },
   { src: t1Track4, name: "sweet", artist: "Delorians" },
   { src: t1Track5, name: "It Was Always You", artist: "The Ivy" },
+  { src: t1Track6, name: "Late Night Radio", artist: "Night Traveler" },
 ];
 
 const TIER_2_TRACKS: Track[] = [
@@ -48,6 +51,7 @@ const TIER_2_TRACKS: Track[] = [
   { src: t2Track3, name: "Flowers in June", artist: "Celine Wanyi" },
   { src: t2Track4, name: "Here You Are", artist: "We Are Various" },
   { src: t2Track5, name: "Sorry", artist: "Nothing But Thieves" },
+  { src: t2Track6, name: "Blue Eyes", artist: "Night Traveler" },
 ];
 
 const TIER_3_TRACKS: Track[] = [
