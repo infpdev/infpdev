@@ -53,8 +53,6 @@ export default function AmbientAudioToggle({
     // Play the easter audio if the easter egg is triggered
 
     if (!hasInteracted && playEasterAudio) {
-      console.log("Easter egg triggered!");
-
       playEasterTrack();
       setPlayEasterAudio(false);
       setShowHint(false);

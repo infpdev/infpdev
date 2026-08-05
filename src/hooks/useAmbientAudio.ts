@@ -6,7 +6,7 @@ import t1Track2 from "@/assets/audio/T1 Painting - Sonia Gadhia.mp3";
 import t1Track3 from "@/assets/audio/T1 ROSE - Gone MV.mp3";
 import t1Track4 from "@/assets/audio/T1 sweet - Delorians.mp3";
 import t1Track5 from "@/assets/audio/T1 The Ivy - It Was Always You.mp3";
-import easterEgg from "@/assets/audio/T1 Toyoki.mp3";
+import monthlySalaryMeow from "@/assets/audio/Easter Toyoki.mp3";
 
 // Tier 2 tracks - loaded only when needed
 import t2Track1 from "@/assets/audio/T2 ALWAYS - minj.mp3";
@@ -27,7 +27,12 @@ export interface Track {
   src: string;
   name: string;
   artist?: string;
+  easterEgg?: boolean; // Optional property to indicate if it's an Easter egg track
 }
+
+const EASTER_TRACKS: Track[] = [
+  { src: monthlySalaryMeow, name: "Toyoki", artist: "Roi Le", easterEgg: true },
+];
 
 const TIER_1_TRACKS: Track[] = [
   { src: t1Track1, name: "Church Bells", artist: "Ordinary Child" },
@@ -35,7 +40,6 @@ const TIER_1_TRACKS: Track[] = [
   { src: t1Track3, name: "Gone", artist: "ROSE" },
   { src: t1Track4, name: "sweet", artist: "Delorians" },
   { src: t1Track5, name: "It Was Always You", artist: "The Ivy" },
-  { src: easterEgg, name: "Toyoki", artist: "Roi Le" },
 ];
 
 const TIER_2_TRACKS: Track[] = [
@@ -64,10 +68,17 @@ const PRELOAD_THRESHOLD = 10; // seconds before end to queue next track
 
 // Helper to get random track excluding played ones
 const getRandomTrack = (tracks: Track[], playedTracks: Set<Track>): Track => {
-  const availableTracks = tracks.filter((track) => !playedTracks.has(track));
+  // Filter out invalid tracks
+  const validTracks = tracks.filter((track) => track && track.src);
+  const availableTracks = validTracks.filter(
+    (track) => !playedTracks.has(track),
+  );
 
   if (availableTracks.length === 0) {
-    return tracks[Math.floor(Math.random() * tracks.length)];
+    // Reset and try again with valid tracks
+    playedTracks.clear();
+    const fallbackTracks = validTracks.length > 0 ? validTracks : tracks;
+    return fallbackTracks[Math.floor(Math.random() * fallbackTracks.length)];
   }
 
   const randomBuffer = new Uint32Array(1);
@@ -114,24 +125,25 @@ export const useAmbientAudio = () => {
       preloadRef.current.preload = "auto";
     }
 
-    // Only preload if not already preloading this track
     if (preloadRef.current.src !== track.src && !isPreloadingRef.current) {
       isPreloadingRef.current = true;
-
-      // Setting a new src automatically frees the previous one
       preloadRef.current.src = track.src;
-      preloadRef.current.load();
 
-      // Reset the flag once loaded
+      // Use load() but catch any errors
+      try {
+        preloadRef.current.load();
+      } catch (e) {
+        // Ignore cache errors
+        isPreloadingRef.current = false;
+        return;
+      }
+
       preloadRef.current.oncanplaythrough = () => {
         isPreloadingRef.current = false;
-        // console.log("Preloaded:", track.name);
       };
 
-      // Also reset on error
       preloadRef.current.onerror = () => {
         isPreloadingRef.current = false;
-        console.error("Failed to preload:", track.name);
       };
     }
   }, []);
@@ -163,7 +175,9 @@ export const useAmbientAudio = () => {
     if (!tracks) return;
 
     const playedSet = playedTracksRef.current[tier as 1 | 2 | 3];
-    if (playedSet.size >= tracks.length) {
+    // Only count non-Easter tracks
+    const nonEasterPlayed = [...playedSet].filter((track) => !track.easterEgg);
+    if (nonEasterPlayed.length >= tracks.length) {
       playedSet.clear();
     }
   }, []);
@@ -214,10 +228,17 @@ export const useAmbientAudio = () => {
     if (nextTrackRef.current) {
       const newTrack = nextTrackRef.current;
 
+      // Validate that the track has a valid src
+      if (!newTrack || !newTrack.src) {
+        console.error("Invalid next track:", newTrack);
+        nextTrackRef.current = null;
+        setIsPlaying(false);
+        return;
+      }
+
       // Check if preloaded audio is ready
       if (preloadRef.current && preloadRef.current.src === newTrack.src) {
         // Use the preloaded audio by transferring its buffer
-        // Create a new audio element with the preloaded content
         const newAudio = new Audio(newTrack.src);
         newAudio.preload = "auto";
         newAudio.volume = 0;
@@ -239,12 +260,17 @@ export const useAmbientAudio = () => {
         }
 
         // Start playing the new audio
-        newAudio.play().catch(() => {
-          setIsPlaying(false);
-        });
-        fadeIn(newAudio);
-        setCurrentTrack(newTrack);
-        nextTrackRef.current = null;
+        newAudio
+          .play()
+          .then(() => {
+            fadeIn(newAudio);
+            setCurrentTrack(newTrack);
+            nextTrackRef.current = null;
+          })
+          .catch((err) => {
+            console.error("Failed to play preloaded track:", err);
+            setIsPlaying(false);
+          });
 
         // Reset preload element
         if (preloadRef.current) {
@@ -254,14 +280,24 @@ export const useAmbientAudio = () => {
         }
       } else {
         // Fallback: load normally if preload failed
-        audio.src = newTrack.src;
-        audio.load();
-        audio.play().catch(() => {
+        try {
+          audio.src = newTrack.src;
+          audio.load();
+          audio
+            .play()
+            .then(() => {
+              fadeIn(audio);
+              setCurrentTrack(newTrack);
+              nextTrackRef.current = null;
+            })
+            .catch((err) => {
+              console.error("Failed to play fallback track:", err);
+              setIsPlaying(false);
+            });
+        } catch (err) {
+          console.error("Error loading fallback track:", err);
           setIsPlaying(false);
-        });
-        fadeIn(audio);
-        setCurrentTrack(newTrack);
-        nextTrackRef.current = null;
+        }
       }
     }
   }, [isPlaying, fadeIn, handleTimeUpdate]);
@@ -273,11 +309,16 @@ export const useAmbientAudio = () => {
 
     // Get current tier by checking which array contains the track
     let currentTier = 0;
-    if (TIER_1_TRACKS.some((t) => t.src === currentTrack.src)) currentTier = 1;
-    else if (TIER_2_TRACKS.some((t) => t.src === currentTrack.src))
+    if (currentTrack.easterEgg) {
+      // Treat Easter track as Tier 1
+      currentTier = 1;
+    } else if (TIER_1_TRACKS.some((t) => t.src === currentTrack.src)) {
+      currentTier = 1;
+    } else if (TIER_2_TRACKS.some((t) => t.src === currentTrack.src)) {
       currentTier = 2;
-    else if (TIER_3_TRACKS.some((t) => t.src === currentTrack.src))
+    } else if (TIER_3_TRACKS.some((t) => t.src === currentTrack.src)) {
       currentTier = 3;
+    }
 
     if (currentTier === 0) return;
 
@@ -320,11 +361,16 @@ export const useAmbientAudio = () => {
 
     // Get current tier by checking which array contains the track
     let currentTier = 0;
-    if (TIER_1_TRACKS.some((t) => t.src === currentTrack.src)) currentTier = 1;
-    else if (TIER_2_TRACKS.some((t) => t.src === currentTrack.src))
+    if (currentTrack.easterEgg) {
+      // Treat Easter track as Tier 1
+      currentTier = 1;
+    } else if (TIER_1_TRACKS.some((t) => t.src === currentTrack.src)) {
+      currentTier = 1;
+    } else if (TIER_2_TRACKS.some((t) => t.src === currentTrack.src)) {
       currentTier = 2;
-    else if (TIER_3_TRACKS.some((t) => t.src === currentTrack.src))
+    } else if (TIER_3_TRACKS.some((t) => t.src === currentTrack.src)) {
       currentTier = 3;
+    }
 
     if (currentTier === 0) return;
 
@@ -369,9 +415,12 @@ export const useAmbientAudio = () => {
   }, [currentTrack, handleTrackEnd, preloadNextTrack]);
 
   const playEasterAudio = () => {
-    const track = TIER_1_TRACKS.find((track) => track.src === easterEgg);
-    const playedSet = playedTracksRef.current[1];
-    playedSet.add(track);
+    const track = EASTER_TRACKS[0];
+    if (!track) {
+      console.error("Easter egg track not found!");
+      return null;
+    }
+
     currentTierRef.current = 1;
     nextTrackRef.current = null;
     setQueueEaster(false);
@@ -402,7 +451,14 @@ export const useAmbientAudio = () => {
         currentTierRef.current = 1;
       }
 
-      console.log("Playing:", initialTrack.name);
+      // After getting initialTrack:
+      if (!initialTrack || !initialTrack.src) {
+        console.error("Invalid initial track:", initialTrack);
+        setIsPlaying(false);
+        return;
+      }
+
+      // console.log("Playing:", initialTrack.name);
 
       audio.src = initialTrack.src;
       audio.load();
@@ -474,7 +530,6 @@ export const useAmbientAudio = () => {
     easterEggTriggeredRef.current = true; // Use a ref instead of state to avoid toggle from using stale state
 
     toggle();
-    console.log("Easter egg track queued.");
   }, [toggle]);
 
   // Update event listeners when callbacks change
