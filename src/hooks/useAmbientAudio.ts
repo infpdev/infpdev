@@ -6,6 +6,7 @@ import t1Track2 from "@/assets/audio/T1 Painting - Sonia Gadhia.mp3";
 import t1Track3 from "@/assets/audio/T1 ROSE - Gone MV.mp3";
 import t1Track4 from "@/assets/audio/T1 sweet - Delorians.mp3";
 import t1Track5 from "@/assets/audio/T1 The Ivy - It Was Always You.mp3";
+import easterEgg from "@/assets/audio/T1 Toyoki.mp3";
 
 // Tier 2 tracks - loaded only when needed
 import t2Track1 from "@/assets/audio/T2 ALWAYS - minj.mp3";
@@ -34,6 +35,7 @@ const TIER_1_TRACKS: Track[] = [
   { src: t1Track3, name: "Gone", artist: "ROSE" },
   { src: t1Track4, name: "sweet", artist: "Delorians" },
   { src: t1Track5, name: "It Was Always You", artist: "The Ivy" },
+  { src: easterEgg, name: "Toyoki", artist: "Roi Le" },
 ];
 
 const TIER_2_TRACKS: Track[] = [
@@ -87,10 +89,12 @@ export const useAmbientAudio = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  const [queueEaster, setQueueEaster] = useState(false); // New: state to queue Easter egg track
   const currentTierRef = useRef(1);
   const nextTrackRef = useRef<Track | null>(null);
   const fadeIntervalRef = useRef<number | null>(null);
   const isPreloadingRef = useRef(false);
+  const easterEggTriggeredRef = useRef(false);
 
   // Track played songs for each tier
   const playedTracksRef = useRef<{
@@ -364,23 +368,44 @@ export const useAmbientAudio = () => {
     handleTrackEnd();
   }, [currentTrack, handleTrackEnd, preloadNextTrack]);
 
+  const playEasterAudio = () => {
+    const track = TIER_1_TRACKS.find((track) => track.src === easterEgg);
+    const playedSet = playedTracksRef.current[1];
+    playedSet.add(track);
+    currentTierRef.current = 1;
+    nextTrackRef.current = null;
+    setQueueEaster(false);
+    setHasInteracted(true);
+    return track;
+  };
+
   const toggle = useCallback(() => {
     if (!hasInteracted) {
       // First interaction: create audio and start playing
       const audio = new Audio();
-      audio.preload = "auto"; // Changed from "none" to "auto"
+      audio.preload = "auto";
       audioRef.current = audio;
 
-      // Get initial track from tier 1
-      const initialTrack = getRandomTrack(
-        TIER_1_TRACKS,
-        playedTracksRef.current[1],
-      );
-      playedTracksRef.current[1].add(initialTrack);
+      let initialTrack: Track;
+
+      // Check if there's a specific track queued (Easter egg)
+      if (easterEggTriggeredRef.current) {
+        easterEggTriggeredRef.current = false; // Reset the flag
+        initialTrack = playEasterAudio();
+      } else {
+        // Get initial track from tier 1
+        initialTrack = getRandomTrack(
+          TIER_1_TRACKS,
+          playedTracksRef.current[1],
+        );
+        playedTracksRef.current[1].add(initialTrack);
+        currentTierRef.current = 1;
+      }
+
+      console.log("Playing:", initialTrack.name);
 
       audio.src = initialTrack.src;
       audio.load();
-
       setCurrentTrack(initialTrack);
 
       audio.addEventListener("timeupdate", handleTimeUpdate);
@@ -395,18 +420,23 @@ export const useAmbientAudio = () => {
           setHasInteracted(true);
 
           // Preload the next track after a small delay
-          setTimeout(() => {
-            const nextTrack = getRandomTrack(
-              TIER_2_TRACKS,
-              playedTracksRef.current[2],
-            );
-            if (nextTrack) {
-              playedTracksRef.current[2].add(nextTrack);
-              nextTrackRef.current = nextTrack;
-              currentTierRef.current = 2;
-              preloadNextTrack(nextTrack);
-            }
-          }, 2000);
+          const nextTier =
+            currentTierRef.current + 1 > 3 ? 1 : currentTierRef.current + 1;
+          const nextTierTracks = getTierTracks(nextTier);
+          if (nextTierTracks) {
+            setTimeout(() => {
+              const nextTrack = getRandomTrack(
+                nextTierTracks,
+                playedTracksRef.current[nextTier as 1 | 2 | 3],
+              );
+              if (nextTrack) {
+                playedTracksRef.current[nextTier as 1 | 2 | 3].add(nextTrack);
+                nextTrackRef.current = nextTrack;
+                currentTierRef.current = nextTier;
+                preloadNextTrack(nextTrack);
+              }
+            }, 2000);
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -437,6 +467,15 @@ export const useAmbientAudio = () => {
     handleTrackEnd,
     preloadNextTrack,
   ]);
+
+  // Play a specific track (like the Easter egg track)
+  const playEasterTrack = useCallback(() => {
+    setQueueEaster(true); // Indicate that the Easter egg track should be played
+    easterEggTriggeredRef.current = true; // Use a ref instead of state to avoid toggle from using stale state
+
+    toggle();
+    console.log("Easter egg track queued.");
+  }, [toggle]);
 
   // Update event listeners when callbacks change
   useEffect(() => {
@@ -477,5 +516,8 @@ export const useAmbientAudio = () => {
     skipToNext,
     swapTrack,
     hasInteracted,
+    playEasterTrack,
   };
 };
+
+export { TIER_1_TRACKS, TIER_2_TRACKS, TIER_3_TRACKS };

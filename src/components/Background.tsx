@@ -8,7 +8,7 @@ import bg7 from "@/assets/7.png";
 import bg8 from "@/assets/8.png";
 import bg9 from "@/assets/9.png";
 import bg10 from "@/assets/10.png";
-import mcMeow from "@/assets/11.gif";
+import monthlySalaryMeow from "@/assets/11.gif";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -24,7 +24,7 @@ const backgroundImages = [
   bg8,
   bg9,
   bg10,
-  mcMeow,
+  monthlySalaryMeow,
 ];
 
 // Local storage key
@@ -104,11 +104,15 @@ function Background({
   showPage,
   backgroundReady,
   setBackgroundReady,
+  setCurrentBackground,
+  setIsEasterEgg,
 }: {
   isMobile: boolean;
   showPage: boolean;
   backgroundReady: boolean;
   setBackgroundReady: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentBackground: React.Dispatch<React.SetStateAction<string | null>>;
+  setIsEasterEgg: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [shownHistory, setShownHistory] = useState<number[]>(() =>
     getShownHistory(),
@@ -116,6 +120,14 @@ function Background({
 
   // Get the background image
   const backgroundImage = useMemo(() => {
+    const showEasterEgg = new URLSearchParams(window.location.search).get(
+      "easter",
+    );
+
+    if (showEasterEgg) {
+      return { image: monthlySalaryMeow, isEasterEgg: true };
+    }
+
     // Get the current shown history
     let currentHistory = getShownHistory();
     setShownHistory(currentHistory);
@@ -135,8 +147,19 @@ function Background({
     saveShownHistory(updatedHistory);
     setShownHistory(updatedHistory);
 
-    return result.image;
-  }, []); // Empty dependency array - only runs once on mount
+    return {
+      image: result.image,
+      isEasterEgg: result.index === backgroundImages.length - 1,
+    };
+  }, []);
+
+  useEffect(() => {
+    setCurrentBackground(backgroundImage.image);
+  }, [backgroundImage, setCurrentBackground]);
+
+  useEffect(() => {
+    setIsEasterEgg(backgroundImage.isEasterEgg);
+  }, [backgroundImage, setIsEasterEgg]);
 
   // Optional: If you want to preload the next image when the current one is shown
   useEffect(() => {
@@ -146,7 +169,7 @@ function Background({
       setBackgroundReady(true);
     };
 
-    img.src = backgroundImage;
+    img.src = backgroundImage.image;
   }, [backgroundImage, setBackgroundReady]);
 
   return (
@@ -160,7 +183,7 @@ function Background({
         className={`w-[70vh] h-[70vh] flex items-center justify-center
       ${isMobile ? "" : "-translate-y-[10vh]"}`}
       >
-        <img src={backgroundImage} className="w-full h-full object-contain" />
+        <img src={backgroundImage.image} className="w-full h-full object-contain" />
       </div>
     </div>
   );

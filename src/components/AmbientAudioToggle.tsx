@@ -14,8 +14,12 @@ import { titleCase } from "title-case";
 
 export default function AmbientAudioToggle({
   isMobile,
+  playEasterAudio,
+  setPlayEasterAudio,
 }: {
   isMobile: boolean;
+  playEasterAudio: boolean;
+  setPlayEasterAudio: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const {
     isPlaying,
@@ -24,6 +28,7 @@ export default function AmbientAudioToggle({
     skipToNext,
     swapTrack,
     hasInteracted,
+    playEasterTrack,
   } = useAmbientAudio();
   const [showHint, setShowHint] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -43,6 +48,24 @@ export default function AmbientAudioToggle({
       track.artist ? `${track.name} by ${track.artist}` : track.name,
     );
   };
+
+  useEffect(() => {
+    // Play the easter audio if the easter egg is triggered
+
+    if (!hasInteracted && playEasterAudio) {
+      console.log("Easter egg triggered!");
+
+      playEasterTrack();
+      setPlayEasterAudio(false);
+      setShowHint(false);
+    }
+  }, [
+    playEasterAudio,
+    playEasterTrack,
+    hasInteracted,
+    toggle,
+    setPlayEasterAudio,
+  ]);
 
   // Get display name for the button
   const getButtonLabel = () => {
@@ -72,7 +95,9 @@ export default function AmbientAudioToggle({
 
   // Calculate menu offset to stay within viewport
   const calculateMenuOffset = () => {
-    if (!buttonRef.current || !menuRef.current) return 0;
+    if (!buttonRef.current || !menuRef.current) {
+      return 0;
+    }
 
     const buttonRect = buttonRef.current.getBoundingClientRect();
     const menuRect = menuRef.current.getBoundingClientRect();
@@ -235,8 +260,70 @@ export default function AmbientAudioToggle({
   const shouldShowPlayTooltip = !hasInteracted;
 
   useEffect(() => {
-    if (shouldShowPlayTooltip) setShowMenu(true);
+    if (!shouldShowPlayTooltip) setShowMenu(true);
   }, [shouldShowPlayTooltip]);
+
+  function Menu() {
+    return (
+      <div
+        className={`border border-border/50 rounded-lg shadow-lg overflow-hidden flex flex-col items-center
+        ${isMobile ? "backdrop-blur-sm bg-background/50" : "bg-secondary/50"}`}
+      >
+        {/* Buttons at top */}
+        <div className="flex items-center border-b border-primary/30 justify-around p-1.5 gap-0.5">
+          {/* Play/Pause button */}
+          <button
+            onClick={() => {
+              toggle();
+            }}
+            className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? (
+              <Pause className="w-4 h-4" />
+            ) : (
+              <Play className="w-4 h-4" />
+            )}
+          </button>
+
+          {/* Swap button */}
+          <button
+            onClick={() => {
+              swapTrack();
+            }}
+            className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+            aria-label="Swap track"
+          >
+            <Shuffle className="w-4 h-4" />
+          </button>
+
+          {/* Next button */}
+          <button
+            onClick={() => {
+              skipToNext();
+            }}
+            className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
+            aria-label="Next track"
+          >
+            <SkipForward className="w-4 h-4" />
+          </button>
+        </div>
+        {/* Track info at bottom */}
+        {currentTrack && (
+          <div className="px-3 py-1.5 text-center min-w-fit flex flex-col items-center">
+            <div className="text-sm font-medium text-foreground truncate max-w-fit">
+              {titleCase(currentTrack.name)}
+            </div>
+            {currentTrack.artist && (
+              <div className="text-xs text-muted-foreground truncate max-w-fit">
+                {titleCase(currentTrack.artist)}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -277,70 +364,20 @@ export default function AmbientAudioToggle({
           </button>
 
           {/* Menu - appears on long press for mobile */}
-          {isMobile && showMenu && hasInteracted && (
+          {hasInteracted && isMobile && (
             <div
               ref={menuRef}
-              className={`absolute right-full mr-2 top-1/2 bg-secondary/50 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg overflow-hidden transition-transform duration-200`}
+              className={`absolute right-full mr-2 top-1/2 transition-opacity duration-200 ${
+                showMenu
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
+              }`}
               style={{
-                transform: `translateY(calc(-50% + ${menuOffset + 16}px))`,
+                fontFamily: "DM Mono, monospace",
+                transform: `translateY(calc(-50% + ${menuOffset + (isMobile ? 16 : 24)}px))`,
               }}
             >
-              {/* Buttons at top */}
-              <div className="flex items-center border-b border-primary/30 justify-around p-1.5 gap-0.5">
-                {/* Play/Pause button */}
-                <button
-                  onClick={() => {
-                    toggle();
-                    // setShowMenu(false);
-                  }}
-                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
-                  aria-label={isPlaying ? "Pause" : "Play"}
-                >
-                  {isPlaying ? (
-                    <Pause className="w-4 h-4" />
-                  ) : (
-                    <Play className="w-4 h-4" />
-                  )}
-                </button>
-
-                {/* Swap button */}
-                <button
-                  onClick={() => {
-                    swapTrack();
-                    // setShowMenu(false);
-                  }}
-                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
-                  aria-label="Swap track"
-                >
-                  <Shuffle className="w-4 h-4" />
-                </button>
-
-                {/* Next button */}
-                <button
-                  onClick={() => {
-                    skipToNext();
-                    // setShowMenu(false);
-                  }}
-                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
-                  aria-label="Next track"
-                >
-                  <SkipForward className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Track info at bottom */}
-              {currentTrack && (
-                <div className="px-3 py-1.5 text-center min-w-[120px]">
-                  <div className="text-sm font-medium text-foreground truncate max-w-[100px]">
-                    {titleCase(currentTrack.name)}
-                  </div>
-                  {currentTrack.artist && (
-                    <div className="text-xs text-muted-foreground truncate max-w-[100px]">
-                      {titleCase(currentTrack.artist)}
-                    </div>
-                  )}
-                </div>
-              )}
+              <Menu />
             </div>
           )}
         </div>
@@ -426,69 +463,20 @@ export default function AmbientAudioToggle({
           )}
 
           {/* Menu - appears on hover for desktop */}
-          {!isMobile && showMenu && hasInteracted && (
+          {hasInteracted && !isMobile && (
             <div
               ref={menuRef}
-              className={`absolute right-full mr-2 top-1/2 backdrop-blur-[2px] bg-secondary/30 border border-border/50 rounded-lg shadow-lg overflow-hidden transition-transform duration-200`}
+              className={`absolute right-full mr-2 top-1/2 transition-opacity duration-200 ${
+                showMenu
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
+              }`}
               style={{
-                transform: `translateY(calc(-50% + ${menuOffset + 24}px))`,
+                fontFamily: "DM Mono, monospace",
+                transform: `translateY(calc(-50% + ${menuOffset + (isMobile ? 16 : 24)}px))`,
               }}
             >
-              {/* Buttons at top */}
-              <div className="flex items-center border-b border-primary/30 justify-around p-1.5 gap-0.5">
-                {/* Play/Pause button */}
-                <button
-                  onClick={() => {
-                    toggle();
-                    // setShowMenu(false);
-                  }}
-                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
-                  aria-label={isPlaying ? "Pause" : "Play"}
-                >
-                  {isPlaying ? (
-                    <Pause className="w-4 h-4" />
-                  ) : (
-                    <Play className="w-4 h-4" />
-                  )}
-                </button>
-
-                {/* Swap button */}
-                <button
-                  onClick={() => {
-                    swapTrack();
-                    // setShowMenu(false);
-                  }}
-                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
-                  aria-label="Swap track"
-                >
-                  <Shuffle className="w-4 h-4" />
-                </button>
-
-                {/* Next button */}
-                <button
-                  onClick={() => {
-                    skipToNext();
-                    // setShowMenu(false);
-                  }}
-                  className="p-2 rounded-md text-foreground hover:bg-primary/10 transition-colors"
-                  aria-label="Next track"
-                >
-                  <SkipForward className="w-4 h-4" />
-                </button>
-              </div>
-              {/* Track info at bottom */}
-              {currentTrack && (
-                <div className="px-3 py-1.5 text-center min-w-[120px]">
-                  <div className="text-sm font-medium text-foreground truncate max-w-[100px]">
-                    {titleCase(currentTrack.name)}
-                  </div>
-                  {currentTrack.artist && (
-                    <div className="text-xs text-muted-foreground truncate max-w-[100px]">
-                      {titleCase(currentTrack.artist)}
-                    </div>
-                  )}
-                </div>
-              )}
+              <Menu />
             </div>
           )}
         </div>

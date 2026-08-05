@@ -81,18 +81,31 @@ export function DownloadCounter({
       );
     };
 
+    const isAbortError = (error: unknown): boolean => {
+      return error instanceof Error && error.name === "AbortError";
+    };
+
     const loadDownloads = async () => {
       try {
         const count = await loadFromShields();
         setDownloadCount(count);
-      } catch {
+      } catch (err) {
+        if (isAbortError(err)) return;
+
         try {
           const count = await loadFromGithub();
           setDownloadCount(count);
-        } catch {
-          // GitHub failed too
-          const count = await loadFromShields(true);
-          setDownloadCount(count);
+        } catch (githubErr) {
+          if (isAbortError(githubErr)) return;
+
+          try {
+            const count = await loadFromShields(true);
+            setDownloadCount(count);
+          } catch (finalErr) {
+            if (!isAbortError(finalErr)) {
+              console.error("All download count methods failed:", finalErr);
+            }
+          }
         }
       } finally {
         handleCounterLoad();
@@ -100,7 +113,7 @@ export function DownloadCounter({
     };
 
     loadDownloads();
-    return () => controller.abort();
+    return () => controller.abort("Counter load aborted");
   }, [repo, handleCounterLoad]);
 
   return downloadCount === null ? null : (

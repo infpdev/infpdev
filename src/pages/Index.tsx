@@ -10,6 +10,7 @@ import {
   Socials,
   LoadingSpinner,
 } from "@/components";
+import EasterEggOverlay from "@/components/EasterOverlay";
 
 const isDevDead = false;
 
@@ -19,17 +20,44 @@ const Index = () => {
   const [isCompact, setIsCompact] = useState(false);
 
   const [backgroundReady, setBackgroundReady] = useState(false);
+  const [currentBackground, setCurrentBackground] = useState<string | null>(
+    null,
+  );
+  const [isEasterEgg, setIsEasterEgg] = useState(false);
+  const [playEasterAudio, setPlayEasterAudio] = useState(false);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [projectsLoaded, setProjectsLoaded] = useState(false);
   const [showPage, setShowPage] = useState(false);
 
+  const handleEasterClick = () => {
+    setPlayEasterAudio(true);
+    setShowLoader(true);
+    setTimeout(() => {
+      setShowEasterEgg(false);
+      showPageHandler(true);
+    }, 1000);
+  };
+
   useEffect(() => {
     if (projectsLoaded && backgroundReady) {
-      setTimeout(() => {
+      if (isEasterEgg) {
+        setShowEasterEgg(true);
+        setShowLoader(false);
+        return;
+      }
+      showPageHandler();
+    }
+  }, [projectsLoaded, backgroundReady, isEasterEgg]);
+
+  const showPageHandler = (immediate = false) => {
+    setTimeout(
+      () => {
         setShowLoader(false);
         setShowPage(true);
-      }, 1000);
-    }
-  }, [projectsLoaded, backgroundReady]);
+      },
+      immediate ? 0 : 1000,
+    );
+  };
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -54,7 +82,20 @@ const Index = () => {
     >
       {isDevDead && <Ded />}
 
-      {showPage && <AmbientAudioToggle isMobile={isMobile} />}
+      {showEasterEgg && (
+        <EasterEggOverlay
+          isMobile={isMobile}
+          onClose={() => handleEasterClick()}
+        />
+      )}
+
+      {showPage && (
+        <AmbientAudioToggle
+          setPlayEasterAudio={setPlayEasterAudio}
+          playEasterAudio={playEasterAudio}
+          isMobile={isMobile}
+        />
+      )}
       <Redirect />
 
       {/* fixed background image */}
@@ -63,6 +104,8 @@ const Index = () => {
         showPage={showPage}
         backgroundReady={backgroundReady}
         setBackgroundReady={setBackgroundReady}
+        setCurrentBackground={setCurrentBackground}
+        setIsEasterEgg={setIsEasterEgg}
       />
 
       {/* Stars */}
