@@ -24,8 +24,13 @@ const EasterEggOverlay = ({
 }: EasterEggOverlayProps & { isMobile: boolean }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [clickTexts, setClickTexts] = useState<ClickText[]>([]);
+  const [maxClickTexts, setMaxClickTexts] = useState(isMobile ? 25 : 50);
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idCounterRef = useRef(0);
+
+  useEffect(() => {
+    setMaxClickTexts(isMobile ? 25 : 50);
+  }, [isMobile]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -37,7 +42,7 @@ const EasterEggOverlay = ({
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setClickTexts((prev) => {
-        if (prev.length >= 50) return prev;
+        if (prev.length >= maxClickTexts) return prev;
 
         const newClick: ClickText = {
           id: idCounterRef.current++,
@@ -61,7 +66,7 @@ const EasterEggOverlay = ({
         clearInterval(intervalRef.current);
       }
     };
-  }, []);
+  }, [maxClickTexts]);
 
   // Fade out clicks after their random duration
   useEffect(() => {
@@ -170,8 +175,8 @@ const EasterEggOverlay = ({
       ))}
 
       <div
-        className={`bg-background/70 border border-border/70 backdrop-blur-sm p-10 gap-20 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-500
-          ${isMobile ? "w-[80vw] h-auto" : "w-[50vw] h-[50vh] sm:min-w-[600px] md:min-w-[700px] lg:min-w-[800px]"}`}
+        className={`border border-border/70 h-auto gap-20 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-500
+          ${isMobile ? "w-[80vw] py-10 px-5 bg-background/70" : "w-fit bg-background/10 backdrop-blur-md p-10"}`}
         style={{
           fontFamily: "DM Mono, monospace",
           transform: isVisible ? "scale(1)" : "scale(0.95)",
@@ -182,7 +187,7 @@ const EasterEggOverlay = ({
       >
         <div className="text-center px-6 max-w-xl">
           <h1 className="text-2xl md:text-3xl font-medium text-foreground">
-            you've unlocked the monthly salary meow
+            you've discovered the monthly salary meow
           </h1>
 
           <br />
