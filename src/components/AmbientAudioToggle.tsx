@@ -29,6 +29,7 @@ export default function AmbientAudioToggle({
     swapTrack,
     hasInteracted,
     playEasterTrack,
+    setVolume,
   } = useAmbientAudio();
   const [showHint, setShowHint] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -236,6 +237,7 @@ export default function AmbientAudioToggle({
   }, [isPlaying]);
 
   useEffect(() => {
+    setVolume(isMobile ? 0.5 : 0.2);
     const showTimer = setTimeout(() => {
       if (!isPlayingRef.current) {
         setShowHint(true);
@@ -253,7 +255,7 @@ export default function AmbientAudioToggle({
       clearTimeout(showTimer);
       clearTimeout(hideTimer);
     };
-  }, [isMobile]);
+  }, [isMobile, setVolume]);
 
   const shouldShowPlayTooltip = !hasInteracted;
 

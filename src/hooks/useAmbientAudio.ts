@@ -2,11 +2,11 @@ import { useRef, useState, useCallback, useEffect } from "react";
 
 // Tier 1 tracks - loaded initially
 import t1Track1 from "@/assets/audio/T1 Church Bells - Ordinary Child.mp3";
-import t1Track2 from "@/assets/audio/T1 Painting - Sonia Gadhia.mp3";
-import t1Track3 from "@/assets/audio/T1 ROSE - Gone MV.mp3";
-import t1Track4 from "@/assets/audio/T1 sweet - Delorians.mp3";
-import t1Track5 from "@/assets/audio/T1 The Ivy - It Was Always You.mp3";
-import t1Track6 from "@/assets/audio/T1 Night Traveler - Late Night Radio.mp3";
+import t1Track2 from "@/assets/audio/T1 ROSE - Gone MV.mp3";
+import t1Track3 from "@/assets/audio/T1 sweet - Delorians.mp3";
+import t1Track4 from "@/assets/audio/T1 The Ivy - It Was Always You.mp3";
+import t1Track5 from "@/assets/audio/T1 Night Traveler - Late Night Radio.mp3";
+import t1Track6 from "@/assets/audio/T1 tamago - Sweater Kleptomaniac.mp3";
 import monthlySalaryMeow from "@/assets/audio/Easter Toyoki.mp3";
 
 // Tier 2 tracks - loaded only when needed
@@ -16,6 +16,7 @@ import t2Track3 from "@/assets/audio/T2 Flowers in June - Celine Wanyi.mp3";
 import t2Track4 from "@/assets/audio/T2 Here You Are - We Are Various.mp3";
 import t2Track5 from "@/assets/audio/T2 Nothing But Thieves - Sorry.mp3";
 import t2Track6 from "@/assets/audio/T2 Night Traveler - Blue Eyes.mp3";
+import t2Track7 from "@/assets/audio/T2 Painting - Sonia Gadhia.mp3";
 
 // Tier 3 tracks - loaded only when needed
 import t3Track1 from "@/assets/audio/T3 pami - highway.mp3";
@@ -38,11 +39,11 @@ const EASTER_TRACKS: Track[] = [
 
 const TIER_1_TRACKS: Track[] = [
   { src: t1Track1, name: "Church Bells", artist: "Ordinary Child" },
-  { src: t1Track2, name: "Painting", artist: "Sonia Gadhia" },
-  { src: t1Track3, name: "Gone", artist: "ROSE" },
-  { src: t1Track4, name: "sweet", artist: "Delorians" },
-  { src: t1Track5, name: "It Was Always You", artist: "The Ivy" },
-  { src: t1Track6, name: "Late Night Radio", artist: "Night Traveler" },
+  { src: t1Track2, name: "Gone", artist: "ROSE" },
+  { src: t1Track3, name: "sweet", artist: "Delorians" },
+  { src: t1Track4, name: "It Was Always You", artist: "The Ivy" },
+  { src: t1Track5, name: "Late Night Radio", artist: "Night Traveler" },
+  { src: t1Track6, name: "Sweater Kleptomaniac", artist: "tamago" },
 ];
 
 const TIER_2_TRACKS: Track[] = [
@@ -52,6 +53,7 @@ const TIER_2_TRACKS: Track[] = [
   { src: t2Track4, name: "Here You Are", artist: "We Are Various" },
   { src: t2Track5, name: "Sorry", artist: "Nothing But Thieves" },
   { src: t2Track6, name: "Blue Eyes", artist: "Night Traveler" },
+  { src: t2Track7, name: "Painting", artist: "Sonia Gadhia" },
 ];
 
 const TIER_3_TRACKS: Track[] = [
@@ -66,7 +68,7 @@ const TIER_3_TRACKS: Track[] = [
   },
 ];
 
-const TARGET_VOLUME = 0.2;
+let TARGET_VOLUME = 0.2;
 const FADE_DURATION = 800;
 const PRELOAD_THRESHOLD = 10; // seconds before end to queue next track
 
@@ -121,6 +123,14 @@ export const useAmbientAudio = () => {
     2: new Set(),
     3: new Set(),
   });
+
+  const setVolume = useCallback((volume: number) => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = volume;
+    }
+    TARGET_VOLUME = volume;
+  }, []);
 
   // New: Preload the next track
   const preloadNextTrack = useCallback((track: Track) => {
@@ -576,6 +586,7 @@ export const useAmbientAudio = () => {
     swapTrack,
     hasInteracted,
     playEasterTrack,
+    setVolume,
   };
 };
 
