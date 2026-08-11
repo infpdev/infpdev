@@ -1,6 +1,6 @@
 export { default as AmbientAudioToggle } from "./AmbientAudioToggle";
 export { default as Ded } from "./Ded";
-export { default as Redirect } from "./Redirect";
+export { default as Redirect } from "./ui/Redirect/Redirect";
 export { default as About } from "./About";
 export { default as Background } from "./Background";
 export { default as Projects } from "./Projects";

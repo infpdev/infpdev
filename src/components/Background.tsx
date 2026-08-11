@@ -11,6 +11,7 @@ import bg10 from "@/assets/10.png";
 import monthlySalaryMeow from "@/assets/11.gif";
 
 import { useEffect, useMemo, useState } from "react";
+import { REDIRECT_CONFIGS } from "./ui/Redirect/redirectConfig";
 
 // add new images here
 const backgroundImages = [
@@ -55,30 +56,49 @@ const saveShownHistory = (history: number[]) => {
   }
 };
 
+// Helper to check if Easter egg should be allowed
+const isEasterEggAllowed = (): boolean => {
+  const params = new URLSearchParams(window.location.search);
+  for (const config of REDIRECT_CONFIGS) {
+    const paramValue = params.get(config.param);
+    if (paramValue === String(config.value)) {
+      return false;
+    }
+  }
+  return true;
+};
+
 // Get a random background that hasn't been shown yet
 const getRandomUnshownBackground = (
   shownIndices: number[],
 ): { image: string; index: number; reset: boolean } => {
-  // Create an array of all indices
   const allIndices = Array.from(
     { length: backgroundImages.length },
     (_, i) => i,
   );
 
-  // Filter out shown indices
-  const availableIndices = allIndices.filter((i) => !shownIndices.includes(i));
+  const allowEasterEgg = isEasterEggAllowed();
+  const easterEggIndex = backgroundImages.length - 1;
 
-  // If all have been shown, reset and start fresh
+  // Filter out Easter egg if not allowed
+  let availableIndices = allIndices.filter((i) => !shownIndices.includes(i));
+  if (!allowEasterEgg) {
+    console.log("Easter egg is not allowed. Excluding it from backgrounds.");
+    availableIndices = availableIndices.filter((i) => i !== easterEggIndex);
+  }
+
+  // If no available indices, reset and try again
   if (availableIndices.length === 0) {
     console.log("All backgrounds have been shown. Resetting history.");
 
-    // Get the last shown index
     const lastIndex = shownIndices[shownIndices.length - 1];
+    let resetAvailable = allIndices.filter((i) => i !== lastIndex);
 
-    // Create available indices excluding the last one
-    const resetAvailable = allIndices.filter((i) => i !== lastIndex);
+    // Exclude Easter egg if not allowed
+    if (!allowEasterEgg) {
+      resetAvailable = resetAvailable.filter((i) => i !== easterEggIndex);
+    }
 
-    // Pick a random index from available (excluding the last shown)
     const randomIndex =
       resetAvailable[Math.floor(Math.random() * resetAvailable.length)];
 
@@ -89,9 +109,9 @@ const getRandomUnshownBackground = (
     };
   }
 
-  // Pick random from available indices
   const randomIndex =
     availableIndices[Math.floor(Math.random() * availableIndices.length)];
+
   return {
     image: backgroundImages[randomIndex],
     index: randomIndex,
@@ -183,7 +203,10 @@ function Background({
         className={`w-[70vh] h-[70vh] flex items-center justify-center
       ${isMobile ? "" : "-translate-y-[10vh]"}`}
       >
-        <img src={backgroundImage.image} className="w-full h-full object-contain" />
+        <img
+          src={backgroundImage.image}
+          className="w-full h-full object-contain"
+        />
       </div>
     </div>
   );
