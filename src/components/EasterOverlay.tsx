@@ -175,7 +175,7 @@ const EasterEggOverlay = ({
       ))}
 
       <div
-        className={`border border-border/70 h-auto gap-20 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-500
+        className={`h-auto gap-10 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-500
           ${isMobile ? "w-[80vw] py-10 px-5 bg-background/70" : "w-fit bg-background/10 backdrop-blur-md p-10"}`}
         style={{
           fontFamily: "DM Mono, monospace",
@@ -185,13 +185,11 @@ const EasterEggOverlay = ({
         }}
         onClick={handleClose}
       >
-        <div className="text-center px-6 max-w-xl">
+        <div className="text-center flex flex-col px-6 gap-5 max-w-xl">
           <h1 className="text-2xl md:text-3xl font-medium text-foreground">
             you've discovered the monthly salary meow
           </h1>
 
-          <br />
-          <br />
           <p className="text-muted-foreground/70">click to pay meow meow</p>
         </div>
       </div>
